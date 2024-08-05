@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using TodoManager.Models.DTO.Auth;
 
 namespace TodoManager.Controllers;
 
@@ -7,8 +8,11 @@ namespace TodoManager.Controllers;
 public class AuthController : ControllerBase
 {
     [HttpPost("sign-in")]
-    public ActionResult SignIn()
+    public ActionResult SignIn([FromBody] SignInDTO signInDTO)
     {
+        Console.WriteLine(signInDTO.Login);
+        Console.WriteLine(signInDTO.Password);
+
         return Ok();
     }
 }

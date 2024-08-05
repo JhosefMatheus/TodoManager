@@ -135,3 +135,4 @@ C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\refint\Tod
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\TodoManager.pdb
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\TodoManager.genruntimeconfig.cache
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\ref\TodoManager.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\TodoManager.sourcelink.json
