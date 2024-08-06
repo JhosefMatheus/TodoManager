@@ -1,6 +1,4 @@
-
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using TodoManager.Database;
 
 namespace TodoManager;
@@ -32,7 +30,6 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
 
         app.MapControllers();
 

@@ -10,9 +10,6 @@ public class AuthController : ControllerBase
     [HttpPost("sign-in")]
     public ActionResult SignIn([FromBody] SignInDTO signInDTO)
     {
-        Console.WriteLine(signInDTO.Login);
-        Console.WriteLine(signInDTO.Password);
-
-        return Ok();
+        return Ok(signInDTO);
     }
 }
