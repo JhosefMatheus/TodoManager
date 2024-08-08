@@ -26,10 +26,14 @@ public class ProjectController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("check")]
-    public ActionResult Check()
+    [HttpGet("check-exists")]
+    public ActionResult CheckProjectExists([FromQuery] string name)
     {
-        return Ok();
+        CheckProjectExistsResponse checkProjectExistsResponse = this.projectService.CheckProjectExists(name);
+
+        object response = checkProjectExistsResponse.ToJson();
+
+        return Ok(response);
     }
 
     [HttpPut("{id}")]
