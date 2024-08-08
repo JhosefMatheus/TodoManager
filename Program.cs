@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoManager.Database;
+using TodoManager.Services;
 
 namespace TodoManager;
 
@@ -18,6 +19,8 @@ public class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddScoped<ProjectService>();
 
         WebApplication app = builder.Build();
 
