@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\TodoManager.csproj": {}
+    "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\TodoManager.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\TodoManager.csproj": {
+    "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\TodoManager.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\TodoManager.csproj",
+        "projectUniqueName": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\TodoManager.csproj",
         "projectName": "TodoManager",
-        "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\TodoManager.csproj",
+        "projectPath": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\TodoManager.csproj",
         "packagesPath": "C:\\Users\\Jhosef Matheus\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\obj\\",
+        "outputPath": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jhosef Matheus\\AppData\\Roaming\\NuGet\\NuGet.Config",

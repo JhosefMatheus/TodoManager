@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using TodoManager.Models.DTO.Project;
+using TodoManager.Models.Responses.Project;
+using TodoManager.Services;
 
 namespace TodoManager.Controllers;
 
@@ -6,8 +9,25 @@ namespace TodoManager.Controllers;
 [Route("project")]
 public class ProjectController : ControllerBase
 {
+    private readonly ProjectService projectService;
+
+    public ProjectController(ProjectService projectService)
+    {
+        this.projectService = projectService;
+    }
+
     [HttpPost]
-    public ActionResult Create()
+    public ActionResult Create([FromBody] CreateProjectDTO createProjectDTO)
+    {
+        CreateProjectResponse createProjectResponse = this.projectService.Create(createProjectDTO);
+
+        object response = createProjectResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpGet("check")]
+    public ActionResult Check()
     {
         return Ok();
     }

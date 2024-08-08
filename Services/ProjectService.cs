@@ -1,4 +1,5 @@
 using TodoManager.Database;
+using TodoManager.Models.DTO.Project;
 using TodoManager.Models.Responses.Project;
 using TodoManager.Models.Shared;
 
@@ -13,7 +14,7 @@ public class ProjectService
         this.todoManagerContext = todoManagerContext;
     }
 
-    public CreateProjectResponse Create()
+    public CreateProjectResponse Create(CreateProjectDTO createProjectDTO)
     {
         CreateProjectResponse response = new CreateProjectResponse
         {
