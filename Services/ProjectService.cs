@@ -3,6 +3,7 @@ using TodoManager.Database;
 using TodoManager.Models.Database;
 using TodoManager.Models.DTO.Project;
 using TodoManager.Models.Exceptions.HttpExceptions;
+using TodoManager.Models.Queries.Project;
 using TodoManager.Models.Responses.Project;
 using TodoManager.Models.Shared;
 
@@ -41,10 +42,17 @@ public class ProjectService
 
             return response;
         }
-        catch (Exception)
+        catch (Exception exception)
         {
             todoManagerContextTransaction.Rollback();
-            throw;
+
+            throw new InternalServerErrorHttpException
+            (
+                "Erro inesperado ao criar projeto.",
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
         }
     }
 
@@ -74,16 +82,7 @@ public class ProjectService
 
     public GetProjectByIdResponse GetProjectById(int id)
     {
-        Project project = this.todoManagerContext
-            .Projects
-            .AsEnumerable<Project>()
-            .Where<Project>((Project project) =>
-            {
-                bool validId = project.Id == id;
-
-                return validId;
-            })
-            .FirstOrDefault()
+        Project project = FindProjectById(id)
             ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
 
         GetProjectByIdResponse response = new GetProjectByIdResponse
@@ -100,5 +99,121 @@ public class ProjectService
         };
 
         return response;
+    }
+
+    public CheckProjectNameChangedResponse CheckProjectNameChanged(CheckProjectNameChangedQuery query)
+    {
+        Project project = FindProjectById(query.Id)
+            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+
+        bool nameChanged = project.Name != query.Name;
+
+        string repsonseMessage = nameChanged ? "O projeto mudou de nome." : "O projeto não mudou de nome";
+
+        CheckProjectNameChangedResponse response = new CheckProjectNameChangedResponse
+        {
+            Message = repsonseMessage,
+            Variant = AlertVariant.Success,
+            Changed = nameChanged,
+        };
+
+        return response;
+    }
+
+    private Project? FindProjectById(int id)
+    {
+        Project? project = this.todoManagerContext
+            .Projects
+            .AsEnumerable<Project>()
+            .Where<Project>((Project project) =>
+            {
+                bool validId = project.Id == id;
+
+                return validId;
+            })
+            .FirstOrDefault<Project>();
+
+        return project;
+    }
+
+    public UpdateProjectResponse UpdateProject(int id, UpdateProjectDTO updateProjectDTO)
+    {
+        Project project = FindProjectById(id)
+            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+
+        bool projectNameChanged = updateProjectDTO.Name != project.Name;
+
+        if (!projectNameChanged)
+        {
+            return new UpdateProjectResponse
+            {
+                Message = "A atualização que você fez não muda nada nos dados do projeto, então o projeto não foi atualizado.",
+                Variant = AlertVariant.Info,
+            };
+        }
+
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            project.Name = updateProjectDTO.Name;
+            project.UpdatedAt = DateTime.Now;
+
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new UpdateProjectResponse
+            {
+                Message = "Projeto atualizado com sucesso.",
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException
+            (
+                "Erro inesperado no servidor ao atualizar projeto.",
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
+
+    public DeleteProjectResponse DeleteProject(int id)
+    {
+        Project project = FindProjectById(id)
+            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            this.todoManagerContext.Projects.Remove(project);
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new DeleteProjectResponse
+            {
+                Message = "Projeto removido com sucesso.",
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException
+            (
+                "Erro inesperado no servidor ao remover projeto.",
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using TodoManager.Models.DTO.Project;
+using TodoManager.Models.Queries.Project;
 using TodoManager.Models.Responses.Project;
 using TodoManager.Services;
 
@@ -36,6 +37,19 @@ public class ProjectController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("check-name-changed")]
+    public ActionResult CheckProjectNameChanged([FromQuery] string query)
+    {
+        CheckProjectNameChangedQuery checkProjectNameChangedQuery = CheckProjectNameChangedQuery.FromJson(query);
+
+        CheckProjectNameChangedResponse checkProjectNameChangedResponse = this.projectService
+            .CheckProjectNameChanged(checkProjectNameChangedQuery);
+
+        object response = checkProjectNameChangedResponse.ToJson();
+
+        return Ok(response);
+    }
+
     [HttpGet("{id}")]
     public ActionResult GetProjectById(int id)
     {
@@ -47,9 +61,13 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public ActionResult Update(int id)
+    public ActionResult Update(int id, [FromBody] UpdateProjectDTO updateProjectDTO)
     {
-        return Ok();
+        UpdateProjectResponse updateProjectResponse = this.projectService.UpdateProject(id, updateProjectDTO);
+
+        object response = updateProjectResponse.ToJson();
+
+        return Ok(response);
     }
 
     [HttpDelete("{id}")]
