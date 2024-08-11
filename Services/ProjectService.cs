@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore.Storage;
 using TodoManager.Database;
 using TodoManager.Models.Database;
 using TodoManager.Models.DTO.Project;
+using TodoManager.Models.Exceptions.HttpExceptions;
 using TodoManager.Models.Responses.Project;
 using TodoManager.Models.Shared;
 
@@ -17,13 +19,33 @@ public class ProjectService
 
     public CreateProjectResponse Create(CreateProjectDTO createProjectDTO)
     {
-        CreateProjectResponse response = new CreateProjectResponse
-        {
-            Message = "Tarefa criada com sucesso.",
-            Variant = AlertVariant.Success,
-        };
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
 
-        return response;
+        try
+        {
+            Project newProject = new Project
+            {
+                Name = createProjectDTO.Name,
+            };
+
+            this.todoManagerContext.Projects.Add(newProject);
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            CreateProjectResponse response = new CreateProjectResponse
+            {
+                Message = "Tarefa criada com sucesso.",
+                Variant = AlertVariant.Success,
+            };
+
+            return response;
+        }
+        catch (Exception)
+        {
+            todoManagerContextTransaction.Rollback();
+            throw;
+        }
     }
 
     public CheckProjectExistsResponse CheckProjectExists(string name)
@@ -45,6 +67,36 @@ public class ProjectService
             Message = responseMessage,
             Variant = AlertVariant.Info,
             ProjectExists = projectExists,
+        };
+
+        return response;
+    }
+
+    public GetProjectByIdResponse GetProjectById(int id)
+    {
+        Project project = this.todoManagerContext
+            .Projects
+            .AsEnumerable<Project>()
+            .Where<Project>((Project project) =>
+            {
+                bool validId = project.Id == id;
+
+                return validId;
+            })
+            .FirstOrDefault()
+            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+
+        GetProjectByIdResponse response = new GetProjectByIdResponse
+        {
+            Message = "Projeto encontrado com sucesso.",
+            Variant = AlertVariant.Success,
+            Project =
+            {
+                Id = project.Id,
+                Name = project.Name,
+                CreatedAt = project.CreatedAt,
+                UpdatedAt = project.UpdatedAt,
+            }
         };
 
         return response;

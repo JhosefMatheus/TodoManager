@@ -4,10 +4,10 @@ namespace TodoManager.Models.Exceptions;
 
 public abstract class BaseException : Exception
 {
-    public required string BaseMessage { get; set; }
+    public string BaseMessage { get; set; }
     public string? ErrorMessage { get; set; }
     public Exception? BaseInnerException { get; set; }
-    public required AlertVariant Variant { get; set; }
+    public AlertVariant Variant { get; set; }
 
     public BaseException(
         string baseMessage,

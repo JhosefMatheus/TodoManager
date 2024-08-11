@@ -36,6 +36,16 @@ public class ProjectController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("{id}")]
+    public ActionResult GetProjectById(int id)
+    {
+        GetProjectByIdResponse getProjectByIdResponse = this.projectService.GetProjectById(id);
+
+        object response = getProjectByIdResponse.ToJson();
+
+        return Ok(response);
+    }
+
     [HttpPut("{id}")]
     public ActionResult Update(int id)
     {
