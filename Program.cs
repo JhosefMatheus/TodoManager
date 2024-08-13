@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TodoManager.Database;
+using TodoManager.Filters.Exceptions;
 using TodoManager.Services;
+using TodoManager.Services.Filters.Exceptions;
 
 namespace TodoManager;
 
@@ -10,7 +13,12 @@ public class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddControllers();
+        builder.Services.AddControllers((MvcOptions options) =>
+        {
+            options.Filters.Add<ExceptionFilter>();
+            options.Filters.Add<BaseExceptionFilter>();
+            options.Filters.Add<BaseHttpExceptionFilter>();
+        });
 
         builder.Services.AddDbContext<TodoManagerContext>((DbContextOptionsBuilder options) =>
         {
@@ -19,6 +27,10 @@ public class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddScoped<ExceptionFilterService>();
+        builder.Services.AddScoped<BaseExceptionFilterService>();
+        builder.Services.AddScoped<BaseHttpExceptionFilterService>();
 
         builder.Services.AddScoped<ProjectService>();
 
