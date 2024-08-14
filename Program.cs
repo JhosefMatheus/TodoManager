@@ -4,6 +4,7 @@ using TodoManager.Database;
 using TodoManager.Filters.Exceptions;
 using TodoManager.Services;
 using TodoManager.Services.Filters.Exceptions;
+using TodoManager.Services.Loggers.Exceptions.Filters;
 
 namespace TodoManager;
 
@@ -16,8 +17,6 @@ public class Program
         builder.Services.AddControllers((MvcOptions options) =>
         {
             options.Filters.Add<ExceptionFilter>();
-            options.Filters.Add<BaseExceptionFilter>();
-            options.Filters.Add<BaseHttpExceptionFilter>();
         });
 
         builder.Services.AddDbContext<TodoManagerContext>((DbContextOptionsBuilder options) =>
@@ -27,6 +26,8 @@ public class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddScoped<ExceptionFilterLoggerService>();
 
         builder.Services.AddScoped<ExceptionFilterService>();
         builder.Services.AddScoped<BaseExceptionFilterService>();

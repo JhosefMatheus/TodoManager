@@ -24,7 +24,8 @@ public class ExceptionFilter : IExceptionFilter, IOrderedFilter
             exceptionFilterResponse = new ExceptionFilterResponse
             {
                 Message = "Erro inesperado no servidor.\n\nNão foi possível encontrar o serviço de tratamento de exceções.",
-                Variant = AlertVariant.Error
+                Variant = AlertVariant.Error,
+                StatusCode = 500,
             };
         }
         else
@@ -36,7 +37,7 @@ public class ExceptionFilter : IExceptionFilter, IOrderedFilter
 
         context.Result = new JsonResult(response)
         {
-            StatusCode = 500
+            StatusCode = exceptionFilterResponse.StatusCode,
         };
     }
 }

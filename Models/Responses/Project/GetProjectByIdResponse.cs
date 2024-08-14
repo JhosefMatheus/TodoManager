@@ -11,7 +11,7 @@ public class GetProjectByIdResponse : BaseResponse
         return new
         {
             message = Message,
-            variant = Variant,
+            variant = Variant.ToString(),
             project = Project.ToJson(),
         };
     }
