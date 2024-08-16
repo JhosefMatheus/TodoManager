@@ -1,5 +1,3 @@
-using TodoManager.Database;
-
 namespace TodoManager.Models.Database;
 
 public class Project
