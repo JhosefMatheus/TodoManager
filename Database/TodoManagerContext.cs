@@ -8,7 +8,7 @@ public class TodoManagerContext : DbContext
 {
     public DbSet<User> Users { get; set; }
     public DbSet<Project> Projects { get; set; }
-    public DbSet<Log> Logs { get; set; }
+    public DbSet<ExceptionLog> ExceptionLogs { get; set; }
 
     public TodoManagerContext(DbContextOptions<TodoManagerContext> options) : base(options) { }
 
@@ -49,21 +49,36 @@ public class TodoManagerContext : DbContext
             projectEntity.HasKey((Project project) => project.Id);
         });
 
-        modelBuilder.Entity<Log>((EntityTypeBuilder<Log> logEntity) =>
+        modelBuilder.Entity<ExceptionLog>((EntityTypeBuilder<ExceptionLog> exceptionLogEntity) =>
         {
-            logEntity.ToTable("log");
+            exceptionLogEntity.ToTable("exception_log");
 
-            logEntity.Property<int>((Log log) => log.Id).HasColumnName<int>("id");
-            logEntity.Property<string>((Log log) => log.Endpoint).HasColumnName<string>("endpoint");
-            logEntity.Property<string>((Log log) => log.Method).HasColumnName<string>("method");
-            logEntity.Property<string>((Log log) => log.Header).HasColumnName<string>("header");
-            logEntity.Property<string>((Log log) => log.Body).HasColumnName<string>("body");
+            exceptionLogEntity.Property<int>((ExceptionLog exceptionLog) => exceptionLog.Id)
+                .HasColumnName<int>("id");
 
-            logEntity.Property<DateTime>((Log log) => log.CreatedAt)
+            exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.Endpoint)
+                .HasColumnName<string>("endpoint");
+
+            exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.Method)
+                .HasColumnName<string>("method");
+
+            exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.Header)
+                .HasColumnName<string>("header");
+
+            exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.Body)
+                .HasColumnName<string>("body");
+            
+            exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.ErrorMessage)
+                .HasColumnName<string>("error_message");
+           
+            exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.StackTrace)
+                .HasColumnName<string>("stack_trace");
+
+            exceptionLogEntity.Property<DateTime>((ExceptionLog exceptionLog) => exceptionLog.CreatedAt)
                 .HasColumnName<DateTime>("created_at")
                 .HasDefaultValueSql<DateTime>("getdate()");
 
-            logEntity.HasKey((Log log) => log.Id);
+            exceptionLogEntity.HasKey((ExceptionLog exceptionLog) => exceptionLog.Id);
         });
     }
 }
