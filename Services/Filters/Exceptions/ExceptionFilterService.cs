@@ -25,17 +25,17 @@ public class ExceptionFilterService : IExceptionFilterService<Exception>
         this.exceptionFilterLoggerService = exceptionFilterLoggerService;
     }
 
-    public ExceptionFilterResponse HandleException(Exception exception)
+    public ExceptionFilterResponse HandleException(Exception exception, HttpRequest request)
     {
         ExceptionFilterResponse response;
 
         if (exception is BaseHttpException baseHttpException)
         {
-            response = this.baseHttpExceptionFilterService.HandleException(baseHttpException);
+            response = this.baseHttpExceptionFilterService.HandleException(baseHttpException, request);
         }
         else if (exception is BaseException baseException)
         {
-            response = this.baseExceptionFilterService.HandleException(baseException);
+            response = this.baseExceptionFilterService.HandleException(baseException, request);
         }
         else
         {

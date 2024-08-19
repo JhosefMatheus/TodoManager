@@ -30,7 +30,9 @@ public class ExceptionFilter : IExceptionFilter, IOrderedFilter
         }
         else
         {
-            exceptionFilterResponse = exceptionFilterService.HandleException(context.Exception);
+            HttpRequest request = context.HttpContext.Request;
+
+            exceptionFilterResponse = exceptionFilterService.HandleException(context.Exception, request);
         }
 
         object response = exceptionFilterResponse.ToJson();

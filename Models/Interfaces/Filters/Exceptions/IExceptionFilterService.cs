@@ -4,5 +4,5 @@ namespace TodoManager.Models.Interfaces.Filters.Exceptions;
 
 public interface IExceptionFilterService<T> where T : Exception
 {
-    public ExceptionFilterResponse HandleException(T exception);
+    public ExceptionFilterResponse HandleException(T exception, HttpRequest request);
 }
