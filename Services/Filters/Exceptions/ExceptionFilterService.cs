@@ -44,7 +44,7 @@ public class ExceptionFilterService : IExceptionFilterService<Exception>
 
             response = new ExceptionFilterResponse
             {
-                Message = "Erro inesperado no servidor. Olhe o registro de exceções para mais informações.",
+                Message = $"Erro inesperado no servidor. {logExceptionResponse.Message}",
                 Variant = AlertVariant.Error,
                 StatusCode = 500,
             };

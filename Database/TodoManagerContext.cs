@@ -63,16 +63,20 @@ public class TodoManagerContext : DbContext
                 .HasColumnName<string>("method");
 
             exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.Header)
-                .HasColumnName<string>("header");
+                .HasColumnName<string>("header")
+                .HasColumnType<string>("nvarchar(max)");
 
             exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.Body)
-                .HasColumnName<string>("body");
-            
+                .HasColumnName<string>("body")
+                .HasColumnType<string>("nvarchar(max)");
+
             exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.ErrorMessage)
-                .HasColumnName<string>("error_message");
-           
+                .HasColumnName<string>("error_message")
+                .HasColumnType<string>("nvarchar(max)");
+
             exceptionLogEntity.Property<string>((ExceptionLog exceptionLog) => exceptionLog.StackTrace)
-                .HasColumnName<string>("stack_trace");
+                .HasColumnName<string>("stack_trace")
+                .HasColumnType<string>("nvarchar(max)");
 
             exceptionLogEntity.Property<DateTime>((ExceptionLog exceptionLog) => exceptionLog.CreatedAt)
                 .HasColumnName<DateTime>("created_at")
