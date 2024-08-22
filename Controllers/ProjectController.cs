@@ -53,6 +53,8 @@ public class ProjectController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult GetProjectById(int id)
     {
+        throw new Exception("Testando excpetion service");
+
         GetProjectByIdResponse getProjectByIdResponse = this.projectService.GetProjectById(id);
 
         object response = getProjectByIdResponse.ToJson();

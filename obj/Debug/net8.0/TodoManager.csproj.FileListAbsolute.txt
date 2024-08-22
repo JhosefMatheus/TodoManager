@@ -136,3 +136,4 @@ C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\TodoManage
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\TodoManager.genruntimeconfig.cache
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\ref\TodoManager.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\obj\Debug\net8.0\TodoManager.sourcelink.json
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\bin\Debug\net8.0\Newtonsoft.Json.dll

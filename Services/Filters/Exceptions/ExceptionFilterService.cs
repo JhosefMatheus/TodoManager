@@ -2,6 +2,7 @@ using TodoManager.Models.Exceptions;
 using TodoManager.Models.Exceptions.HttpExceptions;
 using TodoManager.Models.Interfaces.Filters.Exceptions;
 using TodoManager.Models.Responses.Filters.Exceptions;
+using TodoManager.Models.Responses.Loggers.Exceptions.Filters;
 using TodoManager.Models.Shared;
 using TodoManager.Services.Loggers.Exceptions.Filters;
 
@@ -25,20 +26,22 @@ public class ExceptionFilterService : IExceptionFilterService<Exception>
         this.exceptionFilterLoggerService = exceptionFilterLoggerService;
     }
 
-    public ExceptionFilterResponse HandleException(Exception exception, HttpRequest request)
+    public async Task<ExceptionFilterResponse> HandleException(Exception exception, HttpRequest request)
     {
         ExceptionFilterResponse response;
 
         if (exception is BaseHttpException baseHttpException)
         {
-            response = this.baseHttpExceptionFilterService.HandleException(baseHttpException, request);
+            response = await this.baseHttpExceptionFilterService.HandleException(baseHttpException, request);
         }
         else if (exception is BaseException baseException)
         {
-            response = this.baseExceptionFilterService.HandleException(baseException, request);
+            response = await this.baseExceptionFilterService.HandleException(baseException, request);
         }
         else
         {
+            LogExceptionResponse logExceptionResponse = await this.exceptionFilterLoggerService.LogException(exception, request);
+
             response = new ExceptionFilterResponse
             {
                 Message = "Erro inesperado no servidor. Olhe o registro de exceções para mais informações.",

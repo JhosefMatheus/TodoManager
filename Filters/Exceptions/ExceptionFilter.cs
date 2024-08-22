@@ -10,7 +10,7 @@ public class ExceptionFilter : IExceptionFilter, IOrderedFilter
 {
     public int Order => int.MaxValue;
 
-    public void OnException(ExceptionContext context)
+    public async void OnException(ExceptionContext context)
     {
         ExceptionFilterResponse exceptionFilterResponse;
 
@@ -32,7 +32,7 @@ public class ExceptionFilter : IExceptionFilter, IOrderedFilter
         {
             HttpRequest request = context.HttpContext.Request;
 
-            exceptionFilterResponse = exceptionFilterService.HandleException(context.Exception, request);
+            exceptionFilterResponse = await exceptionFilterService.HandleException(context.Exception, request);
         }
 
         object response = exceptionFilterResponse.ToJson();

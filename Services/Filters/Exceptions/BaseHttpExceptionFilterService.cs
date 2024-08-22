@@ -14,7 +14,7 @@ public class BaseHttpExceptionFilterService : IExceptionFilterService<BaseHttpEx
         this.exceptionFilterLoggerService = exceptionFilterLoggerService;
     }
 
-    public ExceptionFilterResponse HandleException(BaseHttpException exception, HttpRequest request)
+    public async Task<ExceptionFilterResponse> HandleException(BaseHttpException exception, HttpRequest request)
     {
         ExceptionFilterResponse response = new ExceptionFilterResponse
         {
