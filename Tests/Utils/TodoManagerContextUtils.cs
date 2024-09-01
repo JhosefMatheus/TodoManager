@@ -5,14 +5,12 @@ namespace Tests.Utils;
 
 public class TodoManagerContextUtils
 {
-    private static readonly string AppSettingsJsonPath = "../../Api/appsettings.Development.json";
-
     public TodoManagerContextUtils() { }
 
     public static TodoManagerContext GetTodoManagerContext()
     {
         DbContextOptions<TodoManagerContext> dbContextOptions = TodoManagerContext
-            .CreateDbContextOptions(AppSettingsJsonPath);
+            .CreateDbContextOptions();
 
         TodoManagerContext todoManagerContext = new TodoManagerContext(dbContextOptions);
 

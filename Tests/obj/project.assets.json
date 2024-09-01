@@ -4179,11 +4179,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Tests\\Tests.csproj",
       "projectName": "Tests",
-      "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\Tests.csproj",
+      "projectPath": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Tests\\Tests.csproj",
       "packagesPath": "C:\\Users\\Jhosef Matheus\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\obj\\",
+      "outputPath": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Tests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Jhosef Matheus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -4201,8 +4201,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj": {
-              "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj"
+            "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj": {
+              "projectPath": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj"
             }
           }
         }
