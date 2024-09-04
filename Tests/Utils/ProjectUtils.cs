@@ -2,6 +2,7 @@ using Api.Controllers;
 using Api.Database;
 using Api.Models.Database;
 using Api.Models.DTO.Project;
+using Api.Models.Queries.Project;
 using Api.Models.Responses.Project;
 using Api.Models.Shared;
 using Api.Services;
@@ -94,5 +95,51 @@ public class ProjectUtils
         };
 
         return checkProjectExistsResponse;
+    }
+
+    public static CheckProjectNameChangedQuery CreateCheckProjectNameChangedQueryTest(string? name, int id = 1)
+    {
+        CheckProjectNameChangedQuery checkProjectNameChangedQueryTest = new CheckProjectNameChangedQuery()
+        {
+            Id = id,
+            Name = name ?? GetProjectTestName(),
+        };
+
+        return checkProjectNameChangedQueryTest;
+    }
+
+    public static CheckProjectNameChangedResponse CheckProjectNameChangedResponseFromObject(object response)
+    {
+        bool messagePropertyExists = SharedUtils.CheckPropertyExists(response, "message");
+        bool variantPropertyExists = SharedUtils.CheckPropertyExists(response, "variant");
+        bool changedPropertyExists = SharedUtils.CheckPropertyExists(response, "changed");
+
+        if (!messagePropertyExists || !variantPropertyExists || !changedPropertyExists)
+        {
+            throw new InvalidCastException("Não foi possível passar o objeto para CheckProjectNameChangedResponse.");
+        }
+
+        string message = SharedUtils.GetPropertyValue<string>(response, "message");
+
+        string variantText = SharedUtils.GetPropertyValue<string>(response, "variant");
+        AlertVariant variant = SharedUtils.GetAlertVariantFromString(variantText);
+
+        bool projectNameChanged = SharedUtils.GetPropertyValue<bool>(response, "changed");
+
+        CheckProjectNameChangedResponse checkProjectNameChangedResponse = new CheckProjectNameChangedResponse()
+        {
+            Message = message,
+            Variant = variant,
+            Changed = projectNameChanged,
+        };
+
+        return checkProjectNameChangedResponse;
+    }
+
+    public static string GetProjectUpdateName()
+    {
+        string projectUpdateName = "Nome Teste Atualizado";
+
+        return projectUpdateName;
     }
 }

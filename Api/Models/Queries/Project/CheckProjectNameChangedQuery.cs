@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text.Json;
 using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Shared;
@@ -9,6 +10,7 @@ public class CheckProjectNameChangedQuery
 {
     [Required(ErrorMessage = "O campo \"id\" é obrigatório.")]
     public int Id { get; set; }
+
     [Required(AllowEmptyStrings = false, ErrorMessage = "O campo \"name\" é obrigatório e não pode ser uma string vazia.")]
     public string Name { get; set; }
 
@@ -24,5 +26,14 @@ public class CheckProjectNameChangedQuery
         );
 
         return query;
+    }
+
+    public string ToBase64()
+    {
+        using MemoryStream ms = new MemoryStream();
+
+        JsonSerializer.Serialize(ms, this);
+
+        return Convert.ToBase64String(ms.ToArray());
     }
 }

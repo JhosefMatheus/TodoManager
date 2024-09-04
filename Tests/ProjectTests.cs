@@ -1,6 +1,9 @@
 using Api.Controllers;
+using Api.Database;
 using Api.Models.Database;
 using Api.Models.DTO.Project;
+using Api.Models.Exceptions.HttpExceptions;
+using Api.Models.Queries.Project;
 using Api.Models.Responses.Project;
 using Microsoft.AspNetCore.Mvc;
 using Tests.Utils;
@@ -88,6 +91,91 @@ public class ProjectTests
         {
             ProjectUtils.ClearProjectsTable();
         }
+    }
 
+    [TestMethod]
+    public void CheckProjectNameChangedTest()
+    {
+        try
+        {
+            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
+
+            ProjectController projectController = ProjectUtils.GetProjectController();
+
+            CheckProjectNameChangedQuery checkProjectNameChangedQueryTest = ProjectUtils
+                .CreateCheckProjectNameChangedQueryTest(null);
+
+            string checkProjectNameChangedQueryTestBase64 = checkProjectNameChangedQueryTest.ToBase64();
+
+            Assert.ThrowsException<NotFoundHttpException>(() =>
+            {
+                projectController.CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
+            },
+            "Esperasse que o projeto não seja encontrado, pois ele ainda não existe.");
+
+            CreateProjectDTO createTestProjectDTO = ProjectUtils.CreateTestProjectDTO();
+
+            projectController.Create(createTestProjectDTO);
+
+            Project createdProject = todoManagerContext.Projects.First();
+
+            checkProjectNameChangedQueryTest = ProjectUtils
+                .CreateCheckProjectNameChangedQueryTest(createdProject.Name, createdProject.Id);
+
+            checkProjectNameChangedQueryTestBase64 = checkProjectNameChangedQueryTest.ToBase64();
+
+            ActionResult checkProjectNameChangedActionResult = projectController
+                .CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
+
+            Assert.IsInstanceOfType
+            (
+                checkProjectNameChangedActionResult,
+                typeof(OkObjectResult),
+                "Esperasse que o resultado seja do tipo OkObjectResult."
+            );
+
+            OkObjectResult okResult = (OkObjectResult)checkProjectNameChangedActionResult;
+
+            Assert.IsNotNull(okResult, "Esperasse que o OkObjectResult não seja nulo.");
+            Assert.IsNotNull(okResult.Value, "Esperasse que o OkObjectResult.Value não seja nulo.");
+
+            object jsonResponse = okResult.Value;
+
+            CheckProjectNameChangedResponse checkProjectNameChangedResponse = ProjectUtils
+                .CheckProjectNameChangedResponseFromObject(jsonResponse);
+
+            Assert.IsFalse(checkProjectNameChangedResponse.Changed, "Esperasse que o nome do projeto não tenha mudado.");
+
+            checkProjectNameChangedQueryTest = ProjectUtils
+                .CreateCheckProjectNameChangedQueryTest(ProjectUtils.GetProjectUpdateName(), createdProject.Id);
+
+            checkProjectNameChangedQueryTestBase64 = checkProjectNameChangedQueryTest.ToBase64();
+
+            checkProjectNameChangedActionResult = projectController
+                .CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
+
+            Assert.IsInstanceOfType
+            (
+                checkProjectNameChangedActionResult,
+                typeof(OkObjectResult),
+                "Esperasse que o resultado seja do tipo OkObjectResult."
+            );
+
+            okResult = (OkObjectResult)checkProjectNameChangedActionResult;
+
+            Assert.IsNotNull(okResult, "Esperasse que o OkObjectResult não seja nulo.");
+            Assert.IsNotNull(okResult.Value, "Esperasse que o OkObjectResult.Value não seja nulo.");
+
+            jsonResponse = okResult.Value;
+
+            checkProjectNameChangedResponse = ProjectUtils
+                .CheckProjectNameChangedResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(checkProjectNameChangedResponse.Changed, "Esperasse que o nome do projeto tenha mudado.");
+        }
+        finally
+        {
+            ProjectUtils.ClearProjectsTable();
+        }
     }
 }
