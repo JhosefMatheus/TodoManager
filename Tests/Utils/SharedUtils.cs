@@ -1,4 +1,5 @@
 using Api.Models.Shared;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Tests.Utils;
 
@@ -42,5 +43,24 @@ public class SharedUtils
             default:
                 return AlertVariant.Default;
         }
+    }
+
+    public static object ActionResultToObject(ActionResult actionResult)
+    {
+        if (actionResult is not OkObjectResult)
+        {
+            throw new InvalidCastException("Esperasse que a actionResult seja uma instância de OkObjectResult.");
+        }
+
+        OkObjectResult okObjectResult = (OkObjectResult)actionResult;
+
+        if (okObjectResult.Value == null)
+        {
+            throw new NullReferenceException("Esperasse que a propriedade Value de okObjectResult não seja nula.");
+        }
+
+        object actionResultAsObject = okObjectResult.Value;
+
+        return actionResultAsObject;
     }
 }

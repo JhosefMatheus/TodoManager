@@ -89,7 +89,7 @@ public class ProjectService
         {
             Message = "Projeto encontrado com sucesso.",
             Variant = AlertVariant.Success,
-            Project =
+            Project = new ProjectByIdResponse()
             {
                 Id = project.Id,
                 Name = project.Name,

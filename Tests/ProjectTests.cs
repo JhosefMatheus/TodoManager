@@ -1,7 +1,6 @@
 using Api.Controllers;
 using Api.Database;
 using Api.Models.Database;
-using Api.Models.DTO.Project;
 using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.Project;
 using Api.Models.Responses.Project;
@@ -18,11 +17,7 @@ public class ProjectTests
     {
         try
         {
-            ProjectController projectController = ProjectUtils.GetProjectController();
-
-            CreateProjectDTO createTestProjectDTO = ProjectUtils.CreateTestProjectDTO();
-
-            projectController.Create(createTestProjectDTO);
+            ProjectUtils.CreateProject();
 
             List<Project> projects = ProjectUtils.GetProjects();
 
@@ -45,43 +40,18 @@ public class ProjectTests
             string projectTestName = ProjectUtils.GetProjectTestName();
 
             ActionResult checkProjectExistsActionResult = projectController.CheckProjectExists(projectTestName);
-            Assert.IsInstanceOfType
-            (
-                checkProjectExistsActionResult,
-                typeof(OkObjectResult),
-                "Esperasse que o resultado seja do tipo OkObjectResult."
-            );
 
-            OkObjectResult okResult = (OkObjectResult)checkProjectExistsActionResult;
-
-            Assert.IsNotNull(okResult, "Esperasse que o OkObjectResult não seja nulo.");
-            Assert.IsNotNull(okResult.Value, "Esperasse que o OkObjectResult.Value não seja nulo.");
-
-            object jsonResponse = okResult.Value;
+            object jsonResponse = SharedUtils.ActionResultToObject(checkProjectExistsActionResult);
 
             CheckProjectExistsResponse checkProjectExistsResponse = ProjectUtils.CheckProjectExistsResponseFromObject(jsonResponse);
 
             Assert.IsFalse(checkProjectExistsResponse.ProjectExists, "Esperasse que o projeto não exista.");
 
-            CreateProjectDTO createTestProjectDTO = ProjectUtils.CreateTestProjectDTO();
-
-            projectController.Create(createTestProjectDTO);
+            ProjectUtils.CreateProject();
 
             checkProjectExistsActionResult = projectController.CheckProjectExists(projectTestName);
 
-            Assert.IsInstanceOfType
-            (
-                checkProjectExistsActionResult,
-                typeof(OkObjectResult),
-                "Esperasse que o resultado seja do tipo OkObjectResult."
-            );
-
-            okResult = (OkObjectResult)checkProjectExistsActionResult;
-
-            Assert.IsNotNull(okResult, "Esperasse que o OkObjectResult não seja nulo.");
-            Assert.IsNotNull(okResult.Value, "Esperasse que o OkObjectResult.Value não seja nulo.");
-
-            jsonResponse = okResult.Value;
+            jsonResponse = SharedUtils.ActionResultToObject(checkProjectExistsActionResult);
 
             checkProjectExistsResponse = ProjectUtils.CheckProjectExistsResponseFromObject(jsonResponse);
 
@@ -113,11 +83,9 @@ public class ProjectTests
             },
             "Esperasse que o projeto não seja encontrado, pois ele ainda não existe.");
 
-            CreateProjectDTO createTestProjectDTO = ProjectUtils.CreateTestProjectDTO();
+            ProjectUtils.CreateProject();
 
-            projectController.Create(createTestProjectDTO);
-
-            Project createdProject = todoManagerContext.Projects.First();
+            Project createdProject = todoManagerContext.Projects.First<Project>();
 
             checkProjectNameChangedQueryTest = ProjectUtils
                 .CreateCheckProjectNameChangedQueryTest(createdProject.Name, createdProject.Id);
@@ -127,19 +95,7 @@ public class ProjectTests
             ActionResult checkProjectNameChangedActionResult = projectController
                 .CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
 
-            Assert.IsInstanceOfType
-            (
-                checkProjectNameChangedActionResult,
-                typeof(OkObjectResult),
-                "Esperasse que o resultado seja do tipo OkObjectResult."
-            );
-
-            OkObjectResult okResult = (OkObjectResult)checkProjectNameChangedActionResult;
-
-            Assert.IsNotNull(okResult, "Esperasse que o OkObjectResult não seja nulo.");
-            Assert.IsNotNull(okResult.Value, "Esperasse que o OkObjectResult.Value não seja nulo.");
-
-            object jsonResponse = okResult.Value;
+            object jsonResponse = SharedUtils.ActionResultToObject(checkProjectNameChangedActionResult);
 
             CheckProjectNameChangedResponse checkProjectNameChangedResponse = ProjectUtils
                 .CheckProjectNameChangedResponseFromObject(jsonResponse);
@@ -154,24 +110,54 @@ public class ProjectTests
             checkProjectNameChangedActionResult = projectController
                 .CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
 
-            Assert.IsInstanceOfType
-            (
-                checkProjectNameChangedActionResult,
-                typeof(OkObjectResult),
-                "Esperasse que o resultado seja do tipo OkObjectResult."
-            );
-
-            okResult = (OkObjectResult)checkProjectNameChangedActionResult;
-
-            Assert.IsNotNull(okResult, "Esperasse que o OkObjectResult não seja nulo.");
-            Assert.IsNotNull(okResult.Value, "Esperasse que o OkObjectResult.Value não seja nulo.");
-
-            jsonResponse = okResult.Value;
+            jsonResponse = SharedUtils.ActionResultToObject(checkProjectNameChangedActionResult);
 
             checkProjectNameChangedResponse = ProjectUtils
                 .CheckProjectNameChangedResponseFromObject(jsonResponse);
 
             Assert.IsTrue(checkProjectNameChangedResponse.Changed, "Esperasse que o nome do projeto tenha mudado.");
+        }
+        finally
+        {
+            ProjectUtils.ClearProjectsTable();
+        }
+    }
+
+    [TestMethod]
+    public void GetProjectByIdTest()
+    {
+        try
+        {
+            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
+            ProjectController projectController = ProjectUtils.GetProjectController();
+
+            Assert.ThrowsException<NotFoundHttpException>(() =>
+            {
+                projectController.GetProjectById(1);
+            },
+            "Esperasse que o projeto não seja encontrado, pois ele ainda não existe.");
+
+            ProjectUtils.CreateProject();
+
+            Project createdProject = todoManagerContext.Projects.First<Project>();
+
+            int createdProjectId = createdProject.Id;
+
+            ActionResult getProjectByIdActionResult = projectController.GetProjectById(createdProjectId);
+
+            object jsonResponse = SharedUtils.ActionResultToObject(getProjectByIdActionResult);
+
+            GetProjectByIdResponse getProjectByIdResponse = ProjectUtils.GetProjectByIdResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                getProjectByIdResponse.Project.Id == createdProject.Id,
+                "Esperasse que os ids dos projetos sejam iguais."
+                );
+
+            Assert.IsTrue(
+                getProjectByIdResponse.Project.Name == createdProject.Name,
+                "Esperasse que os nomes dos projetos sejam iguais."
+            );
         }
         finally
         {

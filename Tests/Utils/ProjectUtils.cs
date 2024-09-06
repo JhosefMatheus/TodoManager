@@ -11,6 +11,15 @@ namespace Tests.Utils;
 
 public class ProjectUtils
 {
+    public static void CreateProject()
+    {
+        ProjectController projectController = GetProjectController();
+
+        CreateProjectDTO createTestProjectDTO = CreateTestProjectDTO();
+
+        projectController.Create(createTestProjectDTO);
+    }
+
     public static ProjectController GetProjectController()
     {
         ProjectService projectService = GetProjectService();
@@ -141,5 +150,63 @@ public class ProjectUtils
         string projectUpdateName = "Nome Teste Atualizado";
 
         return projectUpdateName;
+    }
+
+    public static GetProjectByIdResponse GetProjectByIdResponseFromObject(object response)
+    {
+        bool messagePropertyExists = SharedUtils.CheckPropertyExists(response, "message");
+        bool variantPropertyExists = SharedUtils.CheckPropertyExists(response, "variant");
+        bool projectPropertyExists = SharedUtils.CheckPropertyExists(response, "project");
+
+        if (!messagePropertyExists || !variantPropertyExists || !projectPropertyExists)
+        {
+            throw new InvalidCastException("Não foi possível passar o objeto para GetProjectByIdResponse.");
+        }
+
+        string message = SharedUtils.GetPropertyValue<string>(response, "message");
+
+        string variantText = SharedUtils.GetPropertyValue<string>(response, "variant");
+        AlertVariant variant = SharedUtils.GetAlertVariantFromString(variantText);
+
+        object projectByIdResponseObject = SharedUtils.GetPropertyValue<object>(response, "project");
+
+        ProjectByIdResponse project = ProjectByIdResponseFromObject(projectByIdResponseObject);
+
+        GetProjectByIdResponse getProjectByIdResponse = new GetProjectByIdResponse()
+        {
+            Message = message,
+            Variant = variant,
+            Project = project,
+        };
+
+        return getProjectByIdResponse;
+    }
+
+    private static ProjectByIdResponse ProjectByIdResponseFromObject(object src)
+    {
+        bool idPropertyExists = SharedUtils.CheckPropertyExists(src, "id");
+        bool namePropertyExists = SharedUtils.CheckPropertyExists(src, "name");
+        bool createdAtPropertyExists = SharedUtils.CheckPropertyExists(src, "createdAt");
+        bool updatedAtPropertyExists = SharedUtils.CheckPropertyExists(src, "updatedAt");
+
+        if (!idPropertyExists || !namePropertyExists || !createdAtPropertyExists || !updatedAtPropertyExists)
+        {
+            throw new InvalidCastException("Não foi possível passar o objeto para ProjectByIdResponse.");
+        }
+
+        int id = SharedUtils.GetPropertyValue<int>(src, "id");
+        string name = SharedUtils.GetPropertyValue<string>(src, "name");
+        DateTime createdAt = SharedUtils.GetPropertyValue<DateTime>(src, "createdAt");
+        DateTime? updatedAt = SharedUtils.GetPropertyValue<DateTime?>(src, "updatedAt");
+
+        ProjectByIdResponse projectByIdResponse = new ProjectByIdResponse()
+        {
+            Id = id,
+            Name = name,
+            CreatedAt = createdAt,
+            UpdatedAt = updatedAt,
+        };
+
+        return projectByIdResponse;
     }
 }
