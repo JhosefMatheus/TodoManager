@@ -29,7 +29,7 @@ public class ProjectUtils
         return projectController;
     }
 
-    private static ProjectService GetProjectService()
+    public static ProjectService GetProjectService()
     {
         TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
 
@@ -186,16 +186,25 @@ public class ProjectUtils
     {
         bool idPropertyExists = SharedUtils.CheckPropertyExists(src, "id");
         bool namePropertyExists = SharedUtils.CheckPropertyExists(src, "name");
+        bool archivedPropertyExists = SharedUtils.CheckPropertyExists(src, "archived");
         bool createdAtPropertyExists = SharedUtils.CheckPropertyExists(src, "createdAt");
         bool updatedAtPropertyExists = SharedUtils.CheckPropertyExists(src, "updatedAt");
 
-        if (!idPropertyExists || !namePropertyExists || !createdAtPropertyExists || !updatedAtPropertyExists)
+        bool propertiesDoesNotExists =
+            !idPropertyExists
+            || !namePropertyExists
+            || !archivedPropertyExists
+            || !createdAtPropertyExists
+            || !updatedAtPropertyExists;
+
+        if (propertiesDoesNotExists)
         {
             throw new InvalidCastException("Não foi possível passar o objeto para ProjectByIdResponse.");
         }
 
         int id = SharedUtils.GetPropertyValue<int>(src, "id");
         string name = SharedUtils.GetPropertyValue<string>(src, "name");
+        bool archived = SharedUtils.GetPropertyValue<bool>(src, "archived");
         DateTime createdAt = SharedUtils.GetPropertyValue<DateTime>(src, "createdAt");
         DateTime? updatedAt = SharedUtils.GetPropertyValue<DateTime?>(src, "updatedAt");
 
@@ -203,6 +212,7 @@ public class ProjectUtils
         {
             Id = id,
             Name = name,
+            Archived = archived,
             CreatedAt = createdAt,
             UpdatedAt = updatedAt,
         };
@@ -242,5 +252,77 @@ public class ProjectUtils
         };
 
         return updateProjectResponse;
+    }
+
+    public static DeleteProjectResponse DeleteProjectResponseFromObject(object src)
+    {
+        bool messagePropertyExists = SharedUtils.CheckPropertyExists(src, "message");
+        bool variantPropertyExists = SharedUtils.CheckPropertyExists(src, "variant");
+
+        if (!messagePropertyExists || !variantPropertyExists)
+        {
+            throw new InvalidCastException("Não foi possível passar o objeto para DeleteProjectResponse.");
+        }
+
+        string message = SharedUtils.GetPropertyValue<string>(src, "message");
+
+        string variantText = SharedUtils.GetPropertyValue<string>(src, "variant");
+        AlertVariant variant = SharedUtils.GetAlertVariantFromString(variantText);
+
+        DeleteProjectResponse deleteProjectResponse = new DeleteProjectResponse()
+        {
+            Message = message,
+            Variant = variant,
+        };
+
+        return deleteProjectResponse;
+    }
+
+    public static ArchiveProjectResponse ArchiveProjectResponseFromObject(object src)
+    {
+        bool messagePropertyExists = SharedUtils.CheckPropertyExists(src, "message");
+        bool variantPropertyExists = SharedUtils.CheckPropertyExists(src, "variant");
+
+        if (!messagePropertyExists || !variantPropertyExists)
+        {
+            throw new InvalidCastException("Não foi possível passar o objeto para ArchiveProjectResponse.");
+        }
+
+        string message = SharedUtils.GetPropertyValue<string>(src, "message");
+
+        string variantText = SharedUtils.GetPropertyValue<string>(src, "variant");
+        AlertVariant variant = SharedUtils.GetAlertVariantFromString(variantText);
+
+        ArchiveProjectResponse archiveProjectResponse = new ArchiveProjectResponse()
+        {
+            Message = message,
+            Variant = variant,
+        };
+
+        return archiveProjectResponse;
+    }
+
+    public static UnarchiveProjectResponse UnarchiveProjectResponseFromObject(object src)
+    {
+        bool messagePropertyExists = SharedUtils.CheckPropertyExists(src, "message");
+        bool variantPropertyExists = SharedUtils.CheckPropertyExists(src, "variant");
+
+        if (!messagePropertyExists || !variantPropertyExists)
+        {
+            throw new InvalidCastException("Não foi possível passar o objeto para UnarchiveProjectResponse.");
+        }
+
+        string message = SharedUtils.GetPropertyValue<string>(src, "message");
+
+        string variantText = SharedUtils.GetPropertyValue<string>(src, "variant");
+        AlertVariant variant = SharedUtils.GetAlertVariantFromString(variantText);
+
+        UnarchiveProjectResponse unarchiveProjectResponse = new UnarchiveProjectResponse()
+        {
+            Message = message,
+            Variant = variant,
+        };
+
+        return unarchiveProjectResponse;
     }
 }

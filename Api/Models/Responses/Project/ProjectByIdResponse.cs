@@ -4,10 +4,11 @@ namespace Api.Models.Responses.Project;
 
 public class ProjectByIdResponse : IJsonSerializable
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    public required int Id { get; set; }
+    public required string Name { get; set; }
+    public required bool Archived { get; set; }
+    public required DateTime CreatedAt { get; set; }
+    public required DateTime? UpdatedAt { get; set; }
 
     public object ToJson()
     {
@@ -15,6 +16,7 @@ public class ProjectByIdResponse : IJsonSerializable
         {
             id = Id,
             name = Name,
+            archived = Archived,
             createdAt = CreatedAt,
             updatedAt = UpdatedAt,
         };

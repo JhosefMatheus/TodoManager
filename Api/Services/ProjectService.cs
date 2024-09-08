@@ -25,7 +25,7 @@ public class ProjectService
 
         try
         {
-            Project newProject = new Project
+            Project newProject = new Project()
             {
                 Name = createProjectDTO.Name,
             };
@@ -35,9 +35,9 @@ public class ProjectService
 
             todoManagerContextTransaction.Commit();
 
-            CreateProjectResponse response = new CreateProjectResponse
+            CreateProjectResponse response = new CreateProjectResponse()
             {
-                Message = "Tarefa criada com sucesso.",
+                Message = ProjectConstants.CreateProjectSuccessMessage,
                 Variant = AlertVariant.Success,
             };
 
@@ -49,7 +49,7 @@ public class ProjectService
 
             throw new InternalServerErrorHttpException
             (
-                "Erro inesperado ao criar projeto.",
+                ProjectConstants.CreateProjectInternalServerErrorMessage,
                 exception.Message,
                 exception,
                 AlertVariant.Error
@@ -69,7 +69,9 @@ public class ProjectService
                 return validName;
             });
 
-        string responseMessage = projectExists ? "Projeto existente." : "Projeto não existe.";
+        string responseMessage = projectExists
+            ? ProjectConstants.ProjectExistsMessage
+            : ProjectConstants.ProjectDoesntExistsMessage;
 
         CheckProjectExistsResponse response = new CheckProjectExistsResponse
         {
@@ -84,16 +86,17 @@ public class ProjectService
     public GetProjectByIdResponse GetProjectById(int id)
     {
         Project project = FindProjectById(id)
-            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+            ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         GetProjectByIdResponse response = new GetProjectByIdResponse()
         {
-            Message = "Projeto encontrado com sucesso.",
+            Message = ProjectConstants.ProjectFoundMessage,
             Variant = AlertVariant.Success,
             Project = new ProjectByIdResponse()
             {
                 Id = project.Id,
                 Name = project.Name,
+                Archived = project.Archived,
                 CreatedAt = project.CreatedAt,
                 UpdatedAt = project.UpdatedAt,
             }
@@ -105,11 +108,13 @@ public class ProjectService
     public CheckProjectNameChangedResponse CheckProjectNameChanged(CheckProjectNameChangedQuery query)
     {
         Project project = FindProjectById(query.Id)
-            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+            ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         bool nameChanged = project.Name != query.Name;
 
-        string repsonseMessage = nameChanged ? "O projeto mudou de nome." : "O projeto não mudou de nome";
+        string repsonseMessage = nameChanged
+            ? ProjectConstants.ProjectNameChangedMessage
+            : ProjectConstants.ProjectNameDidNotChangeMessage;
 
         CheckProjectNameChangedResponse response = new CheckProjectNameChangedResponse
         {
@@ -121,26 +126,10 @@ public class ProjectService
         return response;
     }
 
-    private Project? FindProjectById(int id)
-    {
-        Project? project = this.todoManagerContext
-            .Projects
-            .AsEnumerable<Project>()
-            .Where<Project>((Project project) =>
-            {
-                bool validId = project.Id == id;
-
-                return validId;
-            })
-            .FirstOrDefault<Project>();
-
-        return project;
-    }
-
     public UpdateProjectResponse UpdateProject(int id, UpdateProjectDTO updateProjectDTO)
     {
         Project project = FindProjectById(id)
-            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+            ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         bool projectNameChanged = updateProjectDTO.Name != project.Name;
 
@@ -176,7 +165,7 @@ public class ProjectService
 
             throw new InternalServerErrorHttpException
             (
-                "Erro inesperado no servidor ao atualizar projeto.",
+                ProjectConstants.UpdateProjectInternalServerErrorMessage,
                 exception.Message,
                 exception,
                 AlertVariant.Error
@@ -187,7 +176,7 @@ public class ProjectService
     public DeleteProjectResponse DeleteProject(int id)
     {
         Project project = FindProjectById(id)
-            ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
+            ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
 
@@ -200,7 +189,7 @@ public class ProjectService
 
             return new DeleteProjectResponse
             {
-                Message = "Projeto removido com sucesso.",
+                Message = ProjectConstants.DeleteProjectSuccessMessage,
                 Variant = AlertVariant.Success,
             };
         }
@@ -210,11 +199,111 @@ public class ProjectService
 
             throw new InternalServerErrorHttpException
             (
-                "Erro inesperado no servidor ao remover projeto.",
+                ProjectConstants.DeleteProjectInternalServerErrorMessage,
                 exception.Message,
                 exception,
                 AlertVariant.Error
             );
         }
+    }
+
+    public ArchiveProjectResponse ArchiveProject(int id)
+    {
+        Project project = FindProjectById(id)
+            ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
+
+        if (project.Archived)
+        {
+            return new ArchiveProjectResponse()
+            {
+                Message = ProjectConstants.ProjectAllreadyArchivedMessage,
+                Variant = AlertVariant.Info,
+            };
+        }
+
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            project.Archived = true;
+
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new ArchiveProjectResponse()
+            {
+                Message = ProjectConstants.ArchiveProjectSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException(
+                ProjectConstants.ArchiveProjectInternalServerErrorMessage,
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
+
+    public UnarchiveProjectResponse UnarchiveProject(int id)
+    {
+        Project project = FindProjectById(id)
+            ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
+
+        if (!project.Archived)
+        {
+            return new UnarchiveProjectResponse()
+            {
+                Message = ProjectConstants.ProjectAllreadyUnarchivedMessage,
+                Variant = AlertVariant.Info,
+            };
+        }
+
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            project.Archived = false;
+
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new UnarchiveProjectResponse()
+            {
+                Message = ProjectConstants.UnarchiveProjectSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            throw new InternalServerErrorHttpException(
+                ProjectConstants.UnarchiveProjectInternalServerErrorMessage,
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
+
+    private Project? FindProjectById(int id)
+    {
+        Project? project = this.todoManagerContext
+            .Projects
+            .AsEnumerable<Project>()
+            .Where<Project>((Project project) =>
+            {
+                bool validId = project.Id == id;
+
+                return validId;
+            })
+            .FirstOrDefault<Project>();
+
+        return project;
     }
 }

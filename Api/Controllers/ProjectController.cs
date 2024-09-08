@@ -73,6 +73,30 @@ public class ProjectController : ControllerBase
     [HttpDelete("{id}")]
     public ActionResult Delete(int id)
     {
-        return Ok();
+        DeleteProjectResponse deleteProjectResponse = this.projectService.DeleteProject(id);
+
+        object response = deleteProjectResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpPatch("archive/{id}")]
+    public ActionResult Archive(int id)
+    {
+        ArchiveProjectResponse archiveProjectResponse = this.projectService.ArchiveProject(id);
+
+        object response = archiveProjectResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpPatch("unarchive/{id}")]
+    public ActionResult Unarchive(int id)
+    {
+        UnarchiveProjectResponse unarchiveProjectResponse = this.projectService.UnarchiveProject(id);
+
+        object response = unarchiveProjectResponse.ToJson();
+
+        return Ok(response);
     }
 }

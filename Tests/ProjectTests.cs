@@ -29,7 +29,6 @@ public class ProjectTests
         {
             ProjectUtils.ClearProjectsTable();
         }
-
     }
 
     [TestMethod]
@@ -209,6 +208,143 @@ public class ProjectTests
             Assert.IsTrue(
                 updateProjectResponse.Message == ProjectConstants.UpdateProjectNotChangedMessage,
                 "Esperasse que o projeto não tenha sido atualizado."
+            );
+        }
+        finally
+        {
+            ProjectUtils.ClearProjectsTable();
+        }
+    }
+
+    [TestMethod]
+    public void DeleteProjectTest()
+    {
+        try
+        {
+            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
+            ProjectController projectController = ProjectUtils.GetProjectController();
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () =>
+                {
+                    projectController.Delete(1);
+                },
+                "Esperasse que o projeto não seja encontrado pois ele não existe."
+            );
+
+            ProjectUtils.CreateProject();
+
+            Project createdProject = todoManagerContext.Projects.First<Project>();
+
+            ActionResult deleteProjectActionResult = projectController.Delete(createdProject.Id);
+
+            object jsonResponse = SharedUtils.ActionResultToObject(deleteProjectActionResult);
+
+            DeleteProjectResponse deleteProjectResponse = ProjectUtils.DeleteProjectResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                deleteProjectResponse.Message == ProjectConstants.DeleteProjectSuccessMessage,
+                "Esperasse que o projeto tenha sido removido com sucesso."
+            );
+        }
+        finally
+        {
+            ProjectUtils.ClearProjectsTable();
+        }
+    }
+
+    [TestMethod]
+    public void ArchiveProjectTest()
+    {
+        try
+        {
+            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
+            ProjectController projectController = ProjectUtils.GetProjectController();
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () =>
+                {
+                    projectController.Archive(1);
+                },
+                "Esperasse que o projeto não seja encontrado pois ele ainda não existe."
+            );
+
+            ProjectUtils.CreateProject();
+
+            Project createdProject = todoManagerContext.Projects.First<Project>();
+
+            ActionResult archiveProjectActionResult = projectController.Archive(createdProject.Id);
+
+            object jsonResponse = SharedUtils.ActionResultToObject(archiveProjectActionResult);
+
+            ArchiveProjectResponse archiveProjectResponse = ProjectUtils.ArchiveProjectResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                archiveProjectResponse.Message == ProjectConstants.ArchiveProjectSuccessMessage,
+                "Esperasse que o projeto seja arquivado com sucesso."
+            );
+
+            archiveProjectActionResult = projectController.Archive(createdProject.Id);
+
+            jsonResponse = SharedUtils.ActionResultToObject(archiveProjectActionResult);
+
+            archiveProjectResponse = ProjectUtils.ArchiveProjectResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                archiveProjectResponse.Message == ProjectConstants.ProjectAllreadyArchivedMessage,
+                "Esperasse que o projeto esteja arquivado."
+            );
+        }
+        finally
+        {
+            ProjectUtils.ClearProjectsTable();
+        }
+    }
+
+    [TestMethod]
+    public void UnarchiveProjectTest()
+    {
+        try
+        {
+            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
+            ProjectController projectController = ProjectUtils.GetProjectController();
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () =>
+                {
+                    projectController.Unarchive(1);
+                },
+                "Esperasse que o projeto não seja encontrado pois ele ainda não existe."
+            );
+
+            ProjectUtils.CreateProject();
+
+            Project createdProject = todoManagerContext.Projects.First<Project>();
+
+            ActionResult unarchiveProjectActionResult = projectController.Unarchive(createdProject.Id);
+
+            object jsonResponse = SharedUtils.ActionResultToObject(unarchiveProjectActionResult);
+
+            UnarchiveProjectResponse unarchiveProjectResponse = ProjectUtils.UnarchiveProjectResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                unarchiveProjectResponse.Message == ProjectConstants.ProjectAllreadyUnarchivedMessage,
+                "Esperasse que o projeto já esteja desarquivado."
+            );
+
+            createdProject.Archived = true;
+
+            todoManagerContext.SaveChanges();
+
+            unarchiveProjectActionResult = projectController.Unarchive(createdProject.Id);
+
+            jsonResponse = SharedUtils.ActionResultToObject(unarchiveProjectActionResult);
+
+            unarchiveProjectResponse = ProjectUtils.UnarchiveProjectResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                unarchiveProjectResponse.Message == ProjectConstants.UnarchiveProjectSuccessMessage,
+                "Esperasse que o projeto seja desarquivado com sucesso."
             );
         }
         finally
