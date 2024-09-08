@@ -209,4 +209,38 @@ public class ProjectUtils
 
         return projectByIdResponse;
     }
+
+    public static UpdateProjectDTO CreateUpdateProjectTestDTO()
+    {
+        UpdateProjectDTO updateProjectTestDTO = new UpdateProjectDTO()
+        {
+            Name = "Teste atualizado.",
+        };
+
+        return updateProjectTestDTO;
+    }
+
+    public static UpdateProjectResponse UpdateProjectResponseFromObject(object src)
+    {
+        bool messagePropertyExists = SharedUtils.CheckPropertyExists(src, "message");
+        bool variantPropertyExists = SharedUtils.CheckPropertyExists(src, "variant");
+
+        if (!messagePropertyExists || !variantPropertyExists)
+        {
+            throw new InvalidCastException("Não foi possível passar o objeto para UpdateProjectResponse.");
+        }
+
+        string message = SharedUtils.GetPropertyValue<string>(src, "message");
+
+        string variantText = SharedUtils.GetPropertyValue<string>(src, "variant");
+        AlertVariant variant = SharedUtils.GetAlertVariantFromString(variantText);
+
+        UpdateProjectResponse updateProjectResponse = new UpdateProjectResponse()
+        {
+            Message = message,
+            Variant = variant,
+        };
+
+        return updateProjectResponse;
+    }
 }

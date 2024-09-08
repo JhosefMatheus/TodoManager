@@ -6,6 +6,7 @@ using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.Project;
 using Api.Models.Responses.Project;
 using Api.Models.Shared;
+using Api.Constants;
 
 namespace Api.Services;
 
@@ -85,7 +86,7 @@ public class ProjectService
         Project project = FindProjectById(id)
             ?? throw new NotFoundHttpException("Projeto não encontrado.", AlertVariant.Error);
 
-        GetProjectByIdResponse response = new GetProjectByIdResponse
+        GetProjectByIdResponse response = new GetProjectByIdResponse()
         {
             Message = "Projeto encontrado com sucesso.",
             Variant = AlertVariant.Success,
@@ -147,7 +148,7 @@ public class ProjectService
         {
             return new UpdateProjectResponse
             {
-                Message = "A atualização que você fez não muda nada nos dados do projeto, então o projeto não foi atualizado.",
+                Message = ProjectConstants.UpdateProjectNotChangedMessage,
                 Variant = AlertVariant.Info,
             };
         }
@@ -165,7 +166,7 @@ public class ProjectService
 
             return new UpdateProjectResponse
             {
-                Message = "Projeto atualizado com sucesso.",
+                Message = ProjectConstants.UpdateProjectChangedMessage,
                 Variant = AlertVariant.Success,
             };
         }

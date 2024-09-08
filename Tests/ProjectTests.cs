@@ -1,6 +1,8 @@
+using Api.Constants;
 using Api.Controllers;
 using Api.Database;
 using Api.Models.Database;
+using Api.Models.DTO.Project;
 using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.Project;
 using Api.Models.Responses.Project;
@@ -157,6 +159,56 @@ public class ProjectTests
             Assert.IsTrue(
                 getProjectByIdResponse.Project.Name == createdProject.Name,
                 "Esperasse que os nomes dos projetos sejam iguais."
+            );
+        }
+        finally
+        {
+            ProjectUtils.ClearProjectsTable();
+        }
+    }
+
+    [TestMethod]
+    public void UpdateProjectTest()
+    {
+        try
+        {
+            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
+            ProjectController projectController = ProjectUtils.GetProjectController();
+
+            UpdateProjectDTO updateProjectTestDTO = ProjectUtils.CreateUpdateProjectTestDTO();
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () =>
+                {
+                    projectController.Update(1, updateProjectTestDTO);
+                },
+                "Esperasse que o projeto não seja encontrado, pois ele ainda não existe."
+            );
+
+            ProjectUtils.CreateProject();
+
+            Project createdProject = todoManagerContext.Projects.First<Project>();
+
+            ActionResult updateProjectActionResult = projectController.Update(createdProject.Id, updateProjectTestDTO);
+
+            object jsonResponse = SharedUtils.ActionResultToObject(updateProjectActionResult);
+
+            UpdateProjectResponse updateProjectResponse = ProjectUtils.UpdateProjectResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                updateProjectResponse.Message == ProjectConstants.UpdateProjectChangedMessage,
+                "Esperasse que o projeto tenha sido atualizado."
+            );
+
+            updateProjectActionResult = projectController.Update(createdProject.Id, updateProjectTestDTO);
+
+            jsonResponse = SharedUtils.ActionResultToObject(updateProjectActionResult);
+
+            updateProjectResponse = ProjectUtils.UpdateProjectResponseFromObject(jsonResponse);
+
+            Assert.IsTrue(
+                updateProjectResponse.Message == ProjectConstants.UpdateProjectNotChangedMessage,
+                "Esperasse que o projeto não tenha sido atualizado."
             );
         }
         finally
