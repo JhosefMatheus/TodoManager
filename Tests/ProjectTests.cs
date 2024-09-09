@@ -1,12 +1,14 @@
 using Api.Constants;
-using Api.Controllers;
 using Api.Database;
 using Api.Models.Database;
 using Api.Models.DTO.Project;
 using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.Project;
 using Api.Models.Responses.Project;
-using Microsoft.AspNetCore.Mvc;
+using Api.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Tests.Utils;
 
 namespace Tests;
@@ -14,20 +16,43 @@ namespace Tests;
 [TestClass]
 public class ProjectTests
 {
+    private readonly ProjectService projectService;
+    private readonly ServiceProvider serviceProvider;
+
+    public ProjectTests()
+    {
+        ServiceCollection services = new ServiceCollection();
+
+        services.AddDbContext<TodoManagerContext>(options =>
+        {
+            options
+                .UseInMemoryDatabase("TestTodoManagerDatabase")
+                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+        });
+
+        services.AddScoped<ProjectService>();
+
+        serviceProvider = services.BuildServiceProvider();
+
+        projectService = serviceProvider.GetService<ProjectService>()
+            ?? throw new NullReferenceException("Não foi possível pegar o serviço de projetos.");
+    }
+
     [TestMethod]
     public void CreateProjectTest()
     {
         try
         {
-            ProjectUtils.CreateProject();
+            CreateProjectResponse createProjectResponse = ProjectUtils.CreateProject(projectService);
 
-            List<Project> projects = ProjectUtils.GetProjects();
-
-            Assert.IsTrue(projects.Count == 1, "Ao criar o projeto é esperado que se veja um projeto apenas.");
+            Assert.IsTrue(
+                createProjectResponse.Message == ProjectConstants.CreateProjectSuccessMessage,
+                "Esperasse que o projeto tenha sido criado com sucesso."
+            );
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 
@@ -36,31 +61,21 @@ public class ProjectTests
     {
         try
         {
-            ProjectController projectController = ProjectUtils.GetProjectController();
-
             string projectTestName = ProjectUtils.GetProjectTestName();
 
-            ActionResult checkProjectExistsActionResult = projectController.CheckProjectExists(projectTestName);
-
-            object jsonResponse = SharedUtils.ActionResultToObject(checkProjectExistsActionResult);
-
-            CheckProjectExistsResponse checkProjectExistsResponse = ProjectUtils.CheckProjectExistsResponseFromObject(jsonResponse);
+            CheckProjectExistsResponse checkProjectExistsResponse = projectService.CheckProjectExists(projectTestName);
 
             Assert.IsFalse(checkProjectExistsResponse.ProjectExists, "Esperasse que o projeto não exista.");
 
-            ProjectUtils.CreateProject();
+            ProjectUtils.CreateProject(projectService);
 
-            checkProjectExistsActionResult = projectController.CheckProjectExists(projectTestName);
-
-            jsonResponse = SharedUtils.ActionResultToObject(checkProjectExistsActionResult);
-
-            checkProjectExistsResponse = ProjectUtils.CheckProjectExistsResponseFromObject(jsonResponse);
+            checkProjectExistsResponse = projectService.CheckProjectExists(projectTestName);
 
             Assert.IsTrue(checkProjectExistsResponse.ProjectExists, "Esperasse que o projeto exista.");
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 
@@ -69,58 +84,37 @@ public class ProjectTests
     {
         try
         {
-            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
-
-            ProjectController projectController = ProjectUtils.GetProjectController();
-
             CheckProjectNameChangedQuery checkProjectNameChangedQueryTest = ProjectUtils
                 .CreateCheckProjectNameChangedQueryTest(null);
 
-            string checkProjectNameChangedQueryTestBase64 = checkProjectNameChangedQueryTest.ToBase64();
-
             Assert.ThrowsException<NotFoundHttpException>(() =>
             {
-                projectController.CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
+                projectService.CheckProjectNameChanged(checkProjectNameChangedQueryTest);
             },
             "Esperasse que o projeto não seja encontrado, pois ele ainda não existe.");
 
-            ProjectUtils.CreateProject();
+            ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = todoManagerContext.Projects.First<Project>();
+            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             checkProjectNameChangedQueryTest = ProjectUtils
                 .CreateCheckProjectNameChangedQueryTest(createdProject.Name, createdProject.Id);
 
-            checkProjectNameChangedQueryTestBase64 = checkProjectNameChangedQueryTest.ToBase64();
-
-            ActionResult checkProjectNameChangedActionResult = projectController
-                .CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
-
-            object jsonResponse = SharedUtils.ActionResultToObject(checkProjectNameChangedActionResult);
-
-            CheckProjectNameChangedResponse checkProjectNameChangedResponse = ProjectUtils
-                .CheckProjectNameChangedResponseFromObject(jsonResponse);
+            CheckProjectNameChangedResponse checkProjectNameChangedResponse = projectService
+                .CheckProjectNameChanged(checkProjectNameChangedQueryTest);
 
             Assert.IsFalse(checkProjectNameChangedResponse.Changed, "Esperasse que o nome do projeto não tenha mudado.");
 
             checkProjectNameChangedQueryTest = ProjectUtils
                 .CreateCheckProjectNameChangedQueryTest(ProjectUtils.GetProjectUpdateName(), createdProject.Id);
 
-            checkProjectNameChangedQueryTestBase64 = checkProjectNameChangedQueryTest.ToBase64();
-
-            checkProjectNameChangedActionResult = projectController
-                .CheckProjectNameChanged(checkProjectNameChangedQueryTestBase64);
-
-            jsonResponse = SharedUtils.ActionResultToObject(checkProjectNameChangedActionResult);
-
-            checkProjectNameChangedResponse = ProjectUtils
-                .CheckProjectNameChangedResponseFromObject(jsonResponse);
+            checkProjectNameChangedResponse = projectService.CheckProjectNameChanged(checkProjectNameChangedQueryTest);
 
             Assert.IsTrue(checkProjectNameChangedResponse.Changed, "Esperasse que o nome do projeto tenha mudado.");
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 
@@ -129,26 +123,17 @@ public class ProjectTests
     {
         try
         {
-            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
-            ProjectController projectController = ProjectUtils.GetProjectController();
-
             Assert.ThrowsException<NotFoundHttpException>(() =>
             {
-                projectController.GetProjectById(1);
+                projectService.GetProjectById(1);
             },
             "Esperasse que o projeto não seja encontrado, pois ele ainda não existe.");
 
-            ProjectUtils.CreateProject();
+            ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = todoManagerContext.Projects.First<Project>();
+            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
-            int createdProjectId = createdProject.Id;
-
-            ActionResult getProjectByIdActionResult = projectController.GetProjectById(createdProjectId);
-
-            object jsonResponse = SharedUtils.ActionResultToObject(getProjectByIdActionResult);
-
-            GetProjectByIdResponse getProjectByIdResponse = ProjectUtils.GetProjectByIdResponseFromObject(jsonResponse);
+            GetProjectByIdResponse getProjectByIdResponse = projectService.GetProjectById(createdProject.Id);
 
             Assert.IsTrue(
                 getProjectByIdResponse.Project.Id == createdProject.Id,
@@ -162,7 +147,7 @@ public class ProjectTests
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 
@@ -171,39 +156,28 @@ public class ProjectTests
     {
         try
         {
-            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
-            ProjectController projectController = ProjectUtils.GetProjectController();
-
             UpdateProjectDTO updateProjectTestDTO = ProjectUtils.CreateUpdateProjectTestDTO();
 
             Assert.ThrowsException<NotFoundHttpException>(
                 () =>
                 {
-                    projectController.Update(1, updateProjectTestDTO);
+                    projectService.UpdateProject(1, updateProjectTestDTO);
                 },
                 "Esperasse que o projeto não seja encontrado, pois ele ainda não existe."
             );
 
-            ProjectUtils.CreateProject();
+            ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = todoManagerContext.Projects.First<Project>();
+            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
-            ActionResult updateProjectActionResult = projectController.Update(createdProject.Id, updateProjectTestDTO);
-
-            object jsonResponse = SharedUtils.ActionResultToObject(updateProjectActionResult);
-
-            UpdateProjectResponse updateProjectResponse = ProjectUtils.UpdateProjectResponseFromObject(jsonResponse);
+            UpdateProjectResponse updateProjectResponse = projectService.UpdateProject(createdProject.Id, updateProjectTestDTO);
 
             Assert.IsTrue(
                 updateProjectResponse.Message == ProjectConstants.UpdateProjectChangedMessage,
                 "Esperasse que o projeto tenha sido atualizado."
             );
 
-            updateProjectActionResult = projectController.Update(createdProject.Id, updateProjectTestDTO);
-
-            jsonResponse = SharedUtils.ActionResultToObject(updateProjectActionResult);
-
-            updateProjectResponse = ProjectUtils.UpdateProjectResponseFromObject(jsonResponse);
+            updateProjectResponse = projectService.UpdateProject(createdProject.Id, updateProjectTestDTO);
 
             Assert.IsTrue(
                 updateProjectResponse.Message == ProjectConstants.UpdateProjectNotChangedMessage,
@@ -212,7 +186,7 @@ public class ProjectTests
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 
@@ -221,26 +195,19 @@ public class ProjectTests
     {
         try
         {
-            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
-            ProjectController projectController = ProjectUtils.GetProjectController();
-
             Assert.ThrowsException<NotFoundHttpException>(
                 () =>
                 {
-                    projectController.Delete(1);
+                    projectService.DeleteProject(1);
                 },
                 "Esperasse que o projeto não seja encontrado pois ele não existe."
             );
 
-            ProjectUtils.CreateProject();
+            ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = todoManagerContext.Projects.First<Project>();
+            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
-            ActionResult deleteProjectActionResult = projectController.Delete(createdProject.Id);
-
-            object jsonResponse = SharedUtils.ActionResultToObject(deleteProjectActionResult);
-
-            DeleteProjectResponse deleteProjectResponse = ProjectUtils.DeleteProjectResponseFromObject(jsonResponse);
+            DeleteProjectResponse deleteProjectResponse = projectService.DeleteProject(createdProject.Id);
 
             Assert.IsTrue(
                 deleteProjectResponse.Message == ProjectConstants.DeleteProjectSuccessMessage,
@@ -249,7 +216,7 @@ public class ProjectTests
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 
@@ -258,37 +225,26 @@ public class ProjectTests
     {
         try
         {
-            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
-            ProjectController projectController = ProjectUtils.GetProjectController();
-
             Assert.ThrowsException<NotFoundHttpException>(
                 () =>
                 {
-                    projectController.Archive(1);
+                    projectService.ArchiveProject(1);
                 },
                 "Esperasse que o projeto não seja encontrado pois ele ainda não existe."
             );
 
-            ProjectUtils.CreateProject();
+            ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = todoManagerContext.Projects.First<Project>();
+            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
-            ActionResult archiveProjectActionResult = projectController.Archive(createdProject.Id);
-
-            object jsonResponse = SharedUtils.ActionResultToObject(archiveProjectActionResult);
-
-            ArchiveProjectResponse archiveProjectResponse = ProjectUtils.ArchiveProjectResponseFromObject(jsonResponse);
+            ArchiveProjectResponse archiveProjectResponse = projectService.ArchiveProject(createdProject.Id);
 
             Assert.IsTrue(
                 archiveProjectResponse.Message == ProjectConstants.ArchiveProjectSuccessMessage,
                 "Esperasse que o projeto seja arquivado com sucesso."
             );
 
-            archiveProjectActionResult = projectController.Archive(createdProject.Id);
-
-            jsonResponse = SharedUtils.ActionResultToObject(archiveProjectActionResult);
-
-            archiveProjectResponse = ProjectUtils.ArchiveProjectResponseFromObject(jsonResponse);
+            archiveProjectResponse = projectService.ArchiveProject(createdProject.Id);
 
             Assert.IsTrue(
                 archiveProjectResponse.Message == ProjectConstants.ProjectAllreadyArchivedMessage,
@@ -297,7 +253,7 @@ public class ProjectTests
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 
@@ -306,26 +262,21 @@ public class ProjectTests
     {
         try
         {
-            TodoManagerContext todoManagerContext = TodoManagerContextUtils.GetTodoManagerContext();
-            ProjectController projectController = ProjectUtils.GetProjectController();
+            TodoManagerContext todoManagerContext = ProjectUtils.GetTodoManagerContext(serviceProvider);
 
             Assert.ThrowsException<NotFoundHttpException>(
                 () =>
                 {
-                    projectController.Unarchive(1);
+                    projectService.UnarchiveProject(1);
                 },
                 "Esperasse que o projeto não seja encontrado pois ele ainda não existe."
             );
 
-            ProjectUtils.CreateProject();
+            ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = todoManagerContext.Projects.First<Project>();
+            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
-            ActionResult unarchiveProjectActionResult = projectController.Unarchive(createdProject.Id);
-
-            object jsonResponse = SharedUtils.ActionResultToObject(unarchiveProjectActionResult);
-
-            UnarchiveProjectResponse unarchiveProjectResponse = ProjectUtils.UnarchiveProjectResponseFromObject(jsonResponse);
+            UnarchiveProjectResponse unarchiveProjectResponse = projectService.UnarchiveProject(createdProject.Id);
 
             Assert.IsTrue(
                 unarchiveProjectResponse.Message == ProjectConstants.ProjectAllreadyUnarchivedMessage,
@@ -336,11 +287,7 @@ public class ProjectTests
 
             todoManagerContext.SaveChanges();
 
-            unarchiveProjectActionResult = projectController.Unarchive(createdProject.Id);
-
-            jsonResponse = SharedUtils.ActionResultToObject(unarchiveProjectActionResult);
-
-            unarchiveProjectResponse = ProjectUtils.UnarchiveProjectResponseFromObject(jsonResponse);
+            unarchiveProjectResponse = projectService.UnarchiveProject(createdProject.Id);
 
             Assert.IsTrue(
                 unarchiveProjectResponse.Message == ProjectConstants.UnarchiveProjectSuccessMessage,
@@ -349,7 +296,7 @@ public class ProjectTests
         }
         finally
         {
-            ProjectUtils.ClearProjectsTable();
+            ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
 }

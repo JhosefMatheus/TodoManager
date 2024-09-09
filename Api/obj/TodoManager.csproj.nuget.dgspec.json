@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj": {}
+    "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj": {
+    "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj",
+        "projectUniqueName": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj",
         "projectName": "TodoManager",
-        "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj",
+        "projectPath": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj",
         "packagesPath": "C:\\Users\\Jhosef Matheus\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\obj\\",
+        "outputPath": "C:\\Users\\Jhosef Matheus\\desktop\\projetos\\TodoManager\\Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jhosef Matheus\\AppData\\Roaming\\NuGet\\NuGet.Config",

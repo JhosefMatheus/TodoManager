@@ -160,3 +160,4 @@ C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Tests\obj\Debug\net8.0\refi
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Tests\obj\Debug\net8.0\Tests.pdb
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Tests\obj\Debug\net8.0\Tests.genruntimeconfig.cache
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Tests\obj\Debug\net8.0\ref\Tests.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Tests\bin\Debug\net8.0\Microsoft.EntityFrameworkCore.InMemory.dll
