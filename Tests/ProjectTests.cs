@@ -299,4 +299,27 @@ public class ProjectTests
             ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
+
+    [TestMethod]
+    public void GetAllProjectsTest()
+    {
+        try
+        {
+            GetAllProjectsResponse getAllProjectsResponse = projectService.GetAllProjects();
+
+            Assert.IsTrue(getAllProjectsResponse.Projects.Count == 0, "Esperasse que nenhum projeto seja encontrado.");
+
+            ProjectUtils.CreateProject(projectService);
+            ProjectUtils.CreateProject(projectService);
+            ProjectUtils.CreateProject(projectService);
+
+            getAllProjectsResponse = projectService.GetAllProjects();
+
+            Assert.IsTrue(getAllProjectsResponse.Projects.Count == 3, "Esperasse que sejam encontrados três projetos.");
+        }
+        finally
+        {
+            ProjectUtils.ClearProjectsTable(serviceProvider);
+        }
+    }
 }

@@ -50,6 +50,16 @@ public class ProjectController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("get-all")]
+    public ActionResult GetAllProjects()
+    {
+        GetAllProjectsResponse getAllProjectsResponse = this.projectService.GetAllProjects();
+
+        object response = getAllProjectsResponse.ToJson();
+
+        return Ok(response);
+    }
+
     [HttpGet("{id}")]
     public ActionResult GetProjectById(int id)
     {

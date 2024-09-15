@@ -21,4 +21,6 @@ public class ProjectConstants
     public const string ProjectAllreadyUnarchivedMessage = "Não foi possível desarquivar o projeto pois ele já está desarquivado.";
     public const string UnarchiveProjectInternalServerErrorMessage = "Erro inesperado no servidor ao desarquivar projeto.";
     public const string UnarchiveProjectSuccessMessage = "Projeto desarquivado com sucesso.";
+    public const string GetAllProjectsSuccessMessage = "Projetos encontrados com sucesso.";
+    public const string GetAllProjectsNoProjectExists = "Não existe nenhum projeto.";
 }

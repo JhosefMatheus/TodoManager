@@ -306,4 +306,32 @@ public class ProjectService
 
         return project;
     }
+
+    public GetAllProjectsResponse GetAllProjects()
+    {
+        List<Project> projects = this.todoManagerContext.Projects.ToList<Project>();
+
+        string getAllProjectsMessage = projects.Count > 0
+            ? ProjectConstants.GetAllProjectsSuccessMessage
+            : ProjectConstants.GetAllProjectsNoProjectExists;
+            
+        AlertVariant getAllProjectsAlertVariant = projects.Count > 0 ? AlertVariant.Success : AlertVariant.Info;
+
+        return new GetAllProjectsResponse()
+        {
+            Message = getAllProjectsMessage,
+            Variant = getAllProjectsAlertVariant,
+            Projects = projects.Select<Project, ProjectFromAllProjectsResponse>((Project project) =>
+            {
+                return new ProjectFromAllProjectsResponse()
+                {
+                    Id = project.Id,
+                    Name = project.Name,
+                    Archived = project.Archived,
+                    CreatedAt = project.CreatedAt,
+                    UpdatedAt = project.UpdatedAt,
+                };
+            }).ToList<ProjectFromAllProjectsResponse>(),
+        };
+    }
 }

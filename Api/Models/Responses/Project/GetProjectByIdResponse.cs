@@ -4,7 +4,7 @@ namespace Api.Models.Responses.Project;
 
 public class GetProjectByIdResponse : BaseResponse
 {
-    public ProjectByIdResponse Project { get; set; }
+    public required ProjectByIdResponse Project { get; set; }
 
     public override object ToJson()
     {
