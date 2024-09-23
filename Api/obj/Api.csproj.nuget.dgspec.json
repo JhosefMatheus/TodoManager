@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\Tests.csproj": {}
+    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\Tests.csproj": {
+    "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\Tests.csproj",
-        "projectName": "Tests",
-        "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\Tests.csproj",
+        "projectUniqueName": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\Api.csproj",
+        "projectName": "Api",
+        "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\Api.csproj",
         "packagesPath": "C:\\Users\\Jhosef Matheus\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Tests\\obj\\",
+        "outputPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Jhosef Matheus\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -46,25 +46,23 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
-            "MSTest.TestAdapter": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[3.1.1, )"
+              "version": "[8.0.7, )"
             },
-            "MSTest.TestFramework": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[3.1.1, )"
+              "version": "[8.0.7, )"
             },
-            "Microsoft.EntityFrameworkCore.InMemory": {
+            "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[8.0.8, )"
+              "version": "[13.0.3, )"
             },
-            "Microsoft.NET.Test.Sdk": {
+            "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[17.8.0, )"
-            },
-            "coverlet.collector": {
-              "target": "Package",
-              "version": "[6.0.0, )"
+              "version": "[6.4.0, )"
             }
           },
           "imports": [
@@ -79,6 +77,9 @@
           "assetTargetFallback": true,
           "warn": true,
           "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }

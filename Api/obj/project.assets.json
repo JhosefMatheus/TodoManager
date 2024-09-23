@@ -4533,9 +4533,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj",
-      "projectName": "TodoManager",
-      "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\TodoManager.csproj",
+      "projectUniqueName": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\Api.csproj",
+      "projectName": "Api",
+      "projectPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\Api.csproj",
       "packagesPath": "C:\\Users\\Jhosef Matheus\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Jhosef Matheus\\Desktop\\projetos\\TodoManager\\Api\\obj\\",
       "projectStyle": "PackageReference",
