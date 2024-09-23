@@ -1,11 +1,11 @@
 namespace Api.Models.Database;
 
-public class Project
+public class Section
 {
     public int Id { get; set; }
+    public int ProjectId { get; set; }
     public string Name { get; set; }
-    public bool Archived { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public ICollection<Section> Sections { get; set; }
+    public Project Project { get; set; }
 }

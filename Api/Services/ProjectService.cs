@@ -291,7 +291,7 @@ public class ProjectService
         }
     }
 
-    private Project? FindProjectById(int id)
+    public Project? FindProjectById(int id)
     {
         Project? project = this.todoManagerContext
             .Projects

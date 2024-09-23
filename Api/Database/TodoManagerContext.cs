@@ -9,6 +9,7 @@ public class TodoManagerContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Project> Projects { get; set; }
     public DbSet<ExceptionLog> ExceptionLogs { get; set; }
+    public DbSet<Section> Sections { get; set; }
 
     public TodoManagerContext(DbContextOptions<TodoManagerContext> options) : base(options) { }
 
@@ -32,7 +33,7 @@ public class TodoManagerContext : DbContext
     {
         modelBuilder.Entity<User>((EntityTypeBuilder<User> userEntity) =>
         {
-            userEntity.ToTable("user");
+            userEntity.ToTable<User>("user");
 
             userEntity.Property<int>((User user) => user.Id).HasColumnName<int>("id");
             userEntity.Property<string>((User user) => user.Name).HasColumnName<string>("name");
@@ -51,7 +52,7 @@ public class TodoManagerContext : DbContext
 
         modelBuilder.Entity<Project>((EntityTypeBuilder<Project> projectEntity) =>
         {
-            projectEntity.ToTable("project");
+            projectEntity.ToTable<Project>("project");
 
             projectEntity.Property<int>((Project project) => project.Id).HasColumnName<int>("id");
             projectEntity.Property<string>((Project project) => project.Name).HasColumnName<string>("name");
@@ -71,7 +72,7 @@ public class TodoManagerContext : DbContext
 
         modelBuilder.Entity<ExceptionLog>((EntityTypeBuilder<ExceptionLog> exceptionLogEntity) =>
         {
-            exceptionLogEntity.ToTable("exception_log");
+            exceptionLogEntity.ToTable<ExceptionLog>("exception_log");
 
             exceptionLogEntity.Property<int>((ExceptionLog exceptionLog) => exceptionLog.Id)
                 .HasColumnName<int>("id");
@@ -103,6 +104,33 @@ public class TodoManagerContext : DbContext
                 .HasDefaultValueSql<DateTime>("getdate()");
 
             exceptionLogEntity.HasKey((ExceptionLog exceptionLog) => exceptionLog.Id);
+        });
+
+        modelBuilder.Entity<Section>((EntityTypeBuilder<Section> sectionEntity) =>
+        {
+            sectionEntity.ToTable<Section>("section");
+
+            sectionEntity.Property<int>((Section section) => section.Id)
+                .HasColumnName<int>("id");
+
+            sectionEntity.Property<int>((Section section) => section.ProjectId)
+                .HasColumnName<int>("project_id");
+
+            sectionEntity.Property<string>((Section section) => section.Name)
+                .HasColumnName<string>("name");
+
+            sectionEntity.Property<DateTime>((Section section) => section.CreatedAt)
+                .HasColumnName<DateTime>("created_at")
+                .HasDefaultValueSql<DateTime>("getdate()");
+
+            sectionEntity.Property<DateTime?>((Section section) => section.UpdatedAt)
+                .HasColumnName<DateTime?>("updated_at");
+
+            sectionEntity.HasKey((Section section) => section.Id);
+
+            sectionEntity.HasOne<Project>((Section section) => section.Project)
+                .WithMany((Project project) => project.Sections)
+                .HasForeignKey((Section section) => section.ProjectId);
         });
     }
 }
