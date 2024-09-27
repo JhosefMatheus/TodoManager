@@ -7,5 +7,5 @@ public class Project
     public bool Archived { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public ICollection<Section> Sections { get; set; }
+    public ICollection<ProjectSection> ProjectSections { get; set; }
 }

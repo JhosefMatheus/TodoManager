@@ -1,8 +1,8 @@
 {
   "Version": 1,
-  "Hash": "G2sxKzfdwmyH4cKD1nXyO5bdhMd/VwOv95yZdygMQIM=",
-  "Source": "TodoManager",
-  "BasePath": "_content/TodoManager",
+  "Hash": "llrbuzIYQAIzOVzCT1dMYbgtako286gVg/Pj7offB04=",
+  "Source": "Api",
+  "BasePath": "_content/Api",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],

@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v8.0": {
-      "TodoManager/1.0.0": {
+      "Api/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Design": "8.0.7",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.7",
@@ -14,7 +14,7 @@
           "Swashbuckle.AspNetCore": "6.4.0"
         },
         "runtime": {
-          "TodoManager.dll": {}
+          "Api.dll": {}
         }
       },
       "Azure.Core/1.35.0": {
@@ -917,7 +917,7 @@
     }
   },
   "libraries": {
-    "TodoManager/1.0.0": {
+    "Api/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

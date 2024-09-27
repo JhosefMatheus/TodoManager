@@ -34,6 +34,7 @@ public class Program
         builder.Services.AddScoped<BaseHttpExceptionFilterService>();
 
         builder.Services.AddScoped<ProjectService>();
+        builder.Services.AddScoped<ProjectSectionService>();
 
         WebApplication app = builder.Build();
 

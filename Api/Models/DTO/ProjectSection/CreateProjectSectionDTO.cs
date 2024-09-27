@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Api.Models.DTO.Section;
+namespace Api.Models.DTO.ProjectSection;
 
-public class CreateSectionDTO
+public class CreateProjectSectionDTO
 {
     [Required(ErrorMessage = "O campo \"id\" é obrigatório.")]
     public int ProjectId { get; set; }

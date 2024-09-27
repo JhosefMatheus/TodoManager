@@ -1,6 +1,6 @@
 namespace Api.Models.Database;
 
-public class Section
+public class ProjectSection
 {
     public int Id { get; set; }
     public int ProjectId { get; set; }
