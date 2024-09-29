@@ -80,8 +80,8 @@ public class ProjectSectionService
             .FirstOrDefault<ProjectSection>();
 
         string checkProjectSectionçExistsResponseMessage = projectSection != null
-            ? "Seção já existe."
-            : "Seção não existe.";
+            ? ProjectSectionConstants.ProjectSectionAllreadyExistsMessage
+            : ProjectSectionConstants.ProjectSectionDoesnotExistsMessage;
 
         bool projectSectionExists = projectSection != null;
 

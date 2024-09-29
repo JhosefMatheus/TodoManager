@@ -40,4 +40,10 @@ public class SectionController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpGet("check-project-section-name-changed")]
+    public ActionResult CheckProjectSectionNameChanged([FromQuery] string query)
+    {
+        return Ok();
+    }
 }
