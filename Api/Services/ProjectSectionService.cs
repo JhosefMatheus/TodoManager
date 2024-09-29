@@ -3,6 +3,7 @@ using Api.Database;
 using Api.Models.Database;
 using Api.Models.DTO.ProjectSection;
 using Api.Models.Exceptions.HttpExceptions;
+using Api.Models.Queries.ProjectSection;
 using Api.Models.Responses.ProjectSection;
 using Api.Models.Shared;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -60,5 +61,37 @@ public class ProjectSectionService
                 AlertVariant.Error
             );
         }
+    }
+
+    public CheckProjectSectionExistsResponse CheckProjectSectionExists(CheckProjectSectionExistsQuery query)
+    {
+        ProjectSection? projectSection = this.todoManagerContext
+            .ProjectSections
+            .AsEnumerable<ProjectSection>()
+            .Where<ProjectSection>((ProjectSection currentProjectSection) =>
+            {
+                bool validProjectId = currentProjectSection.ProjectId == query.ProjectId;
+                bool validProjectSectionName = currentProjectSection.Name == query.Name;
+
+                bool validProjectSection = validProjectId && validProjectSectionName;
+
+                return validProjectSection;
+            })
+            .FirstOrDefault<ProjectSection>();
+
+        string checkProjectSectionçExistsResponseMessage = projectSection != null
+            ? "Seção já existe."
+            : "Seção não existe.";
+
+        bool projectSectionExists = projectSection != null;
+
+        CheckProjectSectionExistsResponse checkProjectSectionExistsResponse = new CheckProjectSectionExistsResponse()
+        {
+            Message = checkProjectSectionçExistsResponseMessage,
+            Variant = AlertVariant.Info,
+            ProjectSectionExists = projectSectionExists,
+        };
+
+        return checkProjectSectionExistsResponse;
     }
 }

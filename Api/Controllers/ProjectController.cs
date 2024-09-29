@@ -40,7 +40,8 @@ public class ProjectController : ControllerBase
     [HttpGet("check-name-changed")]
     public ActionResult CheckProjectNameChanged([FromQuery] string query)
     {
-        CheckProjectNameChangedQuery checkProjectNameChangedQuery = CheckProjectNameChangedQuery.FromJson(query);
+        CheckProjectNameChangedQuery checkProjectNameChangedQuery = CheckProjectNameChangedQuery
+            .FromJson<CheckProjectNameChangedQuery>(query);
 
         CheckProjectNameChangedResponse checkProjectNameChangedResponse = this.projectService
             .CheckProjectNameChanged(checkProjectNameChangedQuery);

@@ -1,6 +1,7 @@
 using Api.Database;
 using Api.Models.Database;
 using Api.Models.DTO.ProjectSection;
+using Api.Models.Queries.ProjectSection;
 using Api.Models.Responses.ProjectSection;
 using Api.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,7 @@ namespace Tests.Utils;
 
 public class ProjectSectionUtils : BaseUtils
 {
-    public static void ClearProjectsTable(ServiceProvider serviceProvider)
+    public static void ClearProjectSectionsTable(ServiceProvider serviceProvider)
     {
         TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
 
@@ -47,6 +48,17 @@ public class ProjectSectionUtils : BaseUtils
         };
 
         return createProjectSectionTestDTO;
+    }
+
+    public static CheckProjectSectionExistsQuery CreateProjectSectionExistsQueryTest(string? name, int projectId = 1)
+    {
+        CheckProjectSectionExistsQuery checkProjectSectionExistsQuery = new CheckProjectSectionExistsQuery()
+        {
+            ProjectId = projectId,
+            Name = name ?? GetProjectSectionTestName(),
+        };
+
+        return checkProjectSectionExistsQuery;
     }
 
     public static string GetProjectSectionTestName()

@@ -1,4 +1,5 @@
 using Api.Models.DTO.ProjectSection;
+using Api.Models.Queries.ProjectSection;
 using Api.Models.Responses.ProjectSection;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,20 @@ public class SectionController : ControllerBase
         CreateProjectSectionResponse createSectionResponse = this.projectSectionService.CreateProjectSection(createSectionDTO);
 
         object response = createSectionResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpGet("check-project-section-exists")]
+    public ActionResult CheckProjectSectionExists([FromQuery] string query)
+    {
+        CheckProjectSectionExistsQuery checkProjectSectionExistsQuery = CheckProjectSectionExistsQuery
+            .FromJson<CheckProjectSectionExistsQuery>(query);
+
+        CheckProjectSectionExistsResponse checkProjectSectionExistsResponse = this.projectSectionService
+            .CheckProjectSectionExists(checkProjectSectionExistsQuery);
+
+        object response = checkProjectSectionExistsResponse.ToJson();
 
         return Ok(response);
     }

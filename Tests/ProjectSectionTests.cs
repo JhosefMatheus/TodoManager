@@ -1,7 +1,9 @@
 using Api.Constants;
 using Api.Database;
+using Api.Models.Database;
 using Api.Models.DTO.ProjectSection;
 using Api.Models.Exceptions.HttpExceptions;
+using Api.Models.Queries.ProjectSection;
 using Api.Models.Responses.ProjectSection;
 using Api.Services;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +14,13 @@ using Tests.Utils;
 namespace Tests;
 
 [TestClass]
-public class SectionTests
+public class ProjectSectionTests
 {
     private readonly ProjectSectionService projectSectionService;
     private readonly ProjectService projectService;
     private readonly ServiceProvider serviceProvider;
 
-    public SectionTests()
+    public ProjectSectionTests()
     {
         ServiceCollection services = new ServiceCollection();
 
@@ -42,7 +44,7 @@ public class SectionTests
     }
 
     [TestMethod]
-    public void CreateSectionTest()
+    public void CreateProjectSectionTest()
     {
         try
         {
@@ -60,7 +62,44 @@ public class SectionTests
         }
         finally
         {
-            ProjectSectionUtils.ClearProjectsTable(serviceProvider);
+            ProjectSectionUtils.ClearProjectSectionsTable(serviceProvider);
+            ProjectUtils.ClearProjectsTable(serviceProvider);
+        }
+    }
+
+    [TestMethod]
+    public void CheckProjectSectionExistsTest()
+    {
+        try
+        {
+            CheckProjectSectionExistsQuery checkProjectSectionExistsQuery = ProjectSectionUtils
+                .CreateProjectSectionExistsQueryTest(null);
+
+            CheckProjectSectionExistsResponse checkProjectSectionExistsResponse = this.projectSectionService
+                .CheckProjectSectionExists(checkProjectSectionExistsQuery);
+
+            Assert.IsFalse(
+                checkProjectSectionExistsResponse.ProjectSectionExists,
+                "Esperasse que a sessão do projeto não exista."
+            );
+
+            ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
+
+            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+
+            checkProjectSectionExistsQuery = ProjectSectionUtils.CreateProjectSectionExistsQueryTest(null, createdProject.Id);
+
+            checkProjectSectionExistsResponse = this.projectSectionService
+                .CheckProjectSectionExists(checkProjectSectionExistsQuery);
+
+            Assert.IsTrue(
+                checkProjectSectionExistsResponse.ProjectSectionExists,
+                "Esperasse que a sessão do projeto exista."
+            );
+        }
+        finally
+        {
+            ProjectSectionUtils.ClearProjectSectionsTable(serviceProvider);
             ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
