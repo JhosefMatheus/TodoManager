@@ -103,4 +103,52 @@ public class ProjectSectionTests
             ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
+
+    [TestMethod]
+    public void CheckProjectSectionNameChangedTest()
+    {
+        try
+        {
+            CheckProjectSectionNameChangedQuery checkProjectSectionNameChangedQuery = ProjectSectionUtils
+                .CreateProjectSectionNameChangedQueryTest(null);
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () => projectSectionService.CheckProjectSectionNameChanged(checkProjectSectionNameChangedQuery),
+                "Esperasse que a seção do projeto não exista."
+            );
+
+            ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
+
+            ProjectSection createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+
+            checkProjectSectionNameChangedQuery = ProjectSectionUtils
+                .CreateProjectSectionNameChangedQueryTest(null, createdProjectSection.Id);
+
+            CheckProjectSectionNameChangedResponse checkProjectSectionNameChangedResponse = projectSectionService
+                .CheckProjectSectionNameChanged(checkProjectSectionNameChangedQuery);
+
+            Assert.IsFalse(
+                checkProjectSectionNameChangedResponse.NameChanged,
+                "Esperasse que o nome da seção do projeto não tenha mudado."
+            );
+
+            string projectSectionUpdatedName = ProjectSectionUtils.GetProjectSectionUpdatedName();
+
+            checkProjectSectionNameChangedQuery = ProjectSectionUtils
+                .CreateProjectSectionNameChangedQueryTest(projectSectionUpdatedName, createdProjectSection.Id);
+
+            checkProjectSectionNameChangedResponse = projectSectionService
+                .CheckProjectSectionNameChanged(checkProjectSectionNameChangedQuery);
+
+            Assert.IsTrue(
+                checkProjectSectionNameChangedResponse.NameChanged,
+                "Esperasse que o nome da seção do projeto tenha mudado."
+            );
+        }
+        finally
+        {
+            ProjectSectionUtils.ClearProjectSectionsTable(serviceProvider);
+            ProjectUtils.ClearProjectsTable(serviceProvider);
+        }
+    }
 }

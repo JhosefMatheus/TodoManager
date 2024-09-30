@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Api.Controllers;
 
 [ApiController]
-[Route("section")]
+[Route("project-section")]
 public class SectionController : ControllerBase
 {
     private readonly ProjectSectionService projectSectionService;
@@ -27,7 +27,7 @@ public class SectionController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("check-project-section-exists")]
+    [HttpGet("check-exists")]
     public ActionResult CheckProjectSectionExists([FromQuery] string query)
     {
         CheckProjectSectionExistsQuery checkProjectSectionExistsQuery = CheckProjectSectionExistsQuery
@@ -41,9 +41,17 @@ public class SectionController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("check-project-section-name-changed")]
+    [HttpGet("check-name-changed")]
     public ActionResult CheckProjectSectionNameChanged([FromQuery] string query)
     {
-        return Ok();
+        CheckProjectSectionNameChangedQuery checkProjectSectionNameChangedQuery = CheckProjectSectionNameChangedQuery
+            .FromJson<CheckProjectSectionNameChangedQuery>(query);
+
+        CheckProjectSectionNameChangedResponse checkProjectSectionNameChangedResponse = this.projectSectionService
+            .CheckProjectSectionNameChanged(checkProjectSectionNameChangedQuery);
+
+        object response = checkProjectSectionNameChangedResponse.ToJson();
+
+        return Ok(response);
     }
 }

@@ -94,4 +94,34 @@ public class ProjectSectionService
 
         return checkProjectSectionExistsResponse;
     }
+
+    public CheckProjectSectionNameChangedResponse CheckProjectSectionNameChanged(CheckProjectSectionNameChangedQuery query)
+    {
+        ProjectSection projectSection = this.todoManagerContext
+            .ProjectSections
+            .AsEnumerable<ProjectSection>()
+            .Where<ProjectSection>((ProjectSection currentProjectSection) =>
+            {
+                bool validId = currentProjectSection.Id == query.Id;
+
+                return validId;
+            })
+            .FirstOrDefault<ProjectSection>()
+            ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
+
+        bool nameChanged = projectSection.Name != query.Name;
+
+        string projectSectionNameChangedResponseMessage = nameChanged
+            ? ProjectSectionConstants.ProjectSectionNameChangedMessage
+            : ProjectSectionConstants.ProjectSectionNameDidNotChange;
+
+        CheckProjectSectionNameChangedResponse checkProjectSectionNameChangedResponse = new CheckProjectSectionNameChangedResponse()
+        {
+            Message = projectSectionNameChangedResponseMessage,
+            Variant = AlertVariant.Info,
+            NameChanged = nameChanged,
+        };
+
+        return checkProjectSectionNameChangedResponse;
+    }
 }

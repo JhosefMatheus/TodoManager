@@ -61,10 +61,37 @@ public class ProjectSectionUtils : BaseUtils
         return checkProjectSectionExistsQuery;
     }
 
+    public static CheckProjectSectionNameChangedQuery CreateProjectSectionNameChangedQueryTest(string? name, int id = 1)
+    {
+        CheckProjectSectionNameChangedQuery checkProjectSectionNameChangedQuery = new CheckProjectSectionNameChangedQuery()
+        {
+            Id = id,
+            Name = name ?? GetProjectSectionTestName(),
+        };
+
+        return checkProjectSectionNameChangedQuery;
+    }
+
     public static string GetProjectSectionTestName()
     {
         string projectSectionTestName = "Teste";
 
         return projectSectionTestName;
+    }
+
+    public static ProjectSection GetFirstProjectSection(ServiceProvider serviceProvider)
+    {
+        TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
+
+        ProjectSection projectSection = todoManagerContext.ProjectSections.First<ProjectSection>();
+
+        return projectSection;
+    }
+
+    public static string GetProjectSectionUpdatedName()
+    {
+        string projectSectionUpdatedName = "Updated Project Section Name";
+
+        return projectSectionUpdatedName;
     }
 }
