@@ -151,4 +151,18 @@ public class ProjectSectionTests
             ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
+
+    [TestMethod]
+    public void UpdateProjectSectionTest()
+    {
+        try
+        {
+
+        }
+        finally
+        {
+            ProjectSectionUtils.ClearProjectSectionsTable(serviceProvider);
+            ProjectUtils.ClearProjectsTable(serviceProvider);
+        }
+    }
 }

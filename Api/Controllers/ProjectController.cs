@@ -71,7 +71,7 @@ public class ProjectController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPut("{id}")]
+    [HttpPatch("{id}")]
     public ActionResult Update(int id, [FromBody] UpdateProjectDTO updateProjectDTO)
     {
         UpdateProjectResponse updateProjectResponse = this.projectService.UpdateProject(id, updateProjectDTO);

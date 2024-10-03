@@ -54,4 +54,15 @@ public class SectionController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPatch("{id}")]
+    public ActionResult UpdateProjectSectionById(int id, [FromBody] UpdateProjectSectionDTO updateProjectSectionDTO)
+    {
+        UpdateProjectSectionByIdResponse updateProjectSectionByIdResponse = this.projectSectionService
+            .UpdateProjectSectionById(id, updateProjectSectionDTO);
+
+        object response = updateProjectSectionByIdResponse.ToJson();
+
+        return Ok(response);
+    }
 }

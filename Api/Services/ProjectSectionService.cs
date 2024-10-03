@@ -124,4 +124,60 @@ public class ProjectSectionService
 
         return checkProjectSectionNameChangedResponse;
     }
+
+    public UpdateProjectSectionByIdResponse UpdateProjectSectionById(int id, UpdateProjectSectionDTO updateProjectSectionDTO)
+    {
+        ProjectSection projectSection = this.todoManagerContext
+            .ProjectSections
+            .AsEnumerable<ProjectSection>()
+            .Where<ProjectSection>((ProjectSection currentProjectSection) =>
+            {
+                bool validId = currentProjectSection.Id == id;
+
+                return validId;
+            })
+            .FirstOrDefault<ProjectSection>()
+            ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
+
+        bool nameChanged = projectSection.Name != updateProjectSectionDTO.Name;
+
+        if (!nameChanged)
+        {
+            return new UpdateProjectSectionByIdResponse()
+            {
+                Message = ProjectSectionConstants.UpdateProjectSectionNotChangedMessage,
+                Variant = AlertVariant.Info,
+            };
+        }
+
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            projectSection.Name = updateProjectSectionDTO.Name;
+            projectSection.UpdatedAt = DateTime.Now;
+
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new UpdateProjectSectionByIdResponse()
+            {
+                Message = ProjectSectionConstants.UpdateProjectSectionSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException
+            (
+                ProjectSectionConstants.UpdateProjectInternalServerErrorMessage,
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
 }
