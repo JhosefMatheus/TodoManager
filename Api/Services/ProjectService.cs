@@ -10,7 +10,7 @@ using Api.Constants;
 
 namespace Api.Services;
 
-public class ProjectService
+public class ProjectService : BaseService
 {
     private readonly TodoManagerContext todoManagerContext;
 
@@ -85,7 +85,7 @@ public class ProjectService
 
     public GetProjectByIdResponse GetProjectById(int id)
     {
-        Project project = FindProjectById(id)
+        Project project = FindById<Project>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         GetProjectByIdResponse response = new GetProjectByIdResponse()
@@ -107,7 +107,7 @@ public class ProjectService
 
     public CheckProjectNameChangedResponse CheckProjectNameChanged(CheckProjectNameChangedQuery query)
     {
-        Project project = FindProjectById(query.Id)
+        Project project = FindById<Project>(todoManagerContext.Projects, query.Id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         bool nameChanged = project.Name != query.Name;
@@ -128,7 +128,7 @@ public class ProjectService
 
     public UpdateProjectResponse UpdateProject(int id, UpdateProjectDTO updateProjectDTO)
     {
-        Project project = FindProjectById(id)
+        Project project = FindById<Project>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         bool projectNameChanged = updateProjectDTO.Name != project.Name;
@@ -175,7 +175,7 @@ public class ProjectService
 
     public DeleteProjectResponse DeleteProject(int id)
     {
-        Project project = FindProjectById(id)
+        Project project = FindById<Project>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
@@ -209,7 +209,7 @@ public class ProjectService
 
     public ArchiveProjectResponse ArchiveProject(int id)
     {
-        Project project = FindProjectById(id)
+        Project project = FindById<Project>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         if (project.Archived)
@@ -252,7 +252,7 @@ public class ProjectService
 
     public UnarchiveProjectResponse UnarchiveProject(int id)
     {
-        Project project = FindProjectById(id)
+        Project project = FindById<Project>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         if (!project.Archived)
@@ -291,22 +291,6 @@ public class ProjectService
         }
     }
 
-    public Project? FindProjectById(int id)
-    {
-        Project? project = this.todoManagerContext
-            .Projects
-            .AsEnumerable<Project>()
-            .Where<Project>((Project project) =>
-            {
-                bool validId = project.Id == id;
-
-                return validId;
-            })
-            .FirstOrDefault<Project>();
-
-        return project;
-    }
-
     public GetAllProjectsResponse GetAllProjects()
     {
         List<Project> projects = this.todoManagerContext.Projects.ToList<Project>();
@@ -314,7 +298,7 @@ public class ProjectService
         string getAllProjectsMessage = projects.Count > 0
             ? ProjectConstants.GetAllProjectsSuccessMessage
             : ProjectConstants.GetAllProjectsNoProjectExists;
-            
+
         AlertVariant getAllProjectsAlertVariant = projects.Count > 0 ? AlertVariant.Success : AlertVariant.Info;
 
         return new GetAllProjectsResponse()

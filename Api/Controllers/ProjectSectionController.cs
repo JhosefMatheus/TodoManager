@@ -55,6 +55,37 @@ public class SectionController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPatch("archive/{id}")]
+    public ActionResult Archive(int id)
+    {
+        ArchiveProjectSectionResponse archiveProjectSectionResponse = this.projectSectionService.Archive(id);
+
+        object response = archiveProjectSectionResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpPatch("unarchive/{id}")]
+    public ActionResult Unarchive(int id)
+    {
+        UnarchiveProjectSectionResponse unarchiveProjectSectionResponse = this.projectSectionService.Unarchive(id);
+
+        object response = unarchiveProjectSectionResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpPatch("move-to/{id}")]
+    public ActionResult MoveTo(int id, [FromBody] MoveProjectSectionToProjectDTO moveProjectSectionToProjectDTO)
+    {
+        MoveProjectSectionToProjectResponse moveProjectSectionToProjectResponse = this.projectSectionService
+            .MoveTo(id, moveProjectSectionToProjectDTO);
+
+        object response = moveProjectSectionToProjectResponse.ToJson();
+
+        return Ok(response);
+    }
+
     [HttpPatch("{id}")]
     public ActionResult UpdateProjectSectionById(int id, [FromBody] UpdateProjectSectionDTO updateProjectSectionDTO)
     {
@@ -62,6 +93,16 @@ public class SectionController : ControllerBase
             .UpdateProjectSectionById(id, updateProjectSectionDTO);
 
         object response = updateProjectSectionByIdResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpDelete("{id}")]
+    public ActionResult Delete(int id)
+    {
+        DeleteProjectSectionResponse deleteProjectSectionResponse = this.projectSectionService.Delete(id);
+
+        object response = deleteProjectSectionResponse.ToJson();
 
         return Ok(response);
     }

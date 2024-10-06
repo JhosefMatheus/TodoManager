@@ -27,7 +27,7 @@ public class ProjectTests
         {
             options
                 .UseInMemoryDatabase("TestTodoManagerDatabase")
-                .ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+                .ConfigureWarnings((WarningsConfigurationBuilder warningsConfigurationBuilder) => warningsConfigurationBuilder.Ignore(InMemoryEventId.TransactionIgnoredWarning));
         });
 
         services.AddScoped<ProjectService>();

@@ -119,6 +119,10 @@ public class TodoManagerContext : DbContext
             projectSectionEntity.Property<string>((ProjectSection projectSection) => projectSection.Name)
                 .HasColumnName<string>("name");
 
+            projectSectionEntity.Property<bool>((ProjectSection projectSection) => projectSection.Archived)
+                .HasColumnName<bool>("archived")
+                .HasDefaultValue<bool>(false);
+
             projectSectionEntity.Property<DateTime>((ProjectSection projectSection) => projectSection.CreatedAt)
                 .HasColumnName<DateTime>("created_at")
                 .HasDefaultValueSql<DateTime>("getdate()");

@@ -1,6 +1,8 @@
+using Api.Models.Interfaces.Database;
+
 namespace Api.Models.Database;
 
-public class User
+public class User : IBaseIdentifierEntity
 {
     public int Id { get; set; }
     public string Name { get; set; }

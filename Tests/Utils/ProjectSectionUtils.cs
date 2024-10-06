@@ -72,6 +72,16 @@ public class ProjectSectionUtils : BaseUtils
         return checkProjectSectionNameChangedQuery;
     }
 
+    public static UpdateProjectSectionDTO CreateUpdateProjectSectionTestDTO()
+    {
+        UpdateProjectSectionDTO updateProjectSectionTestDTO = new UpdateProjectSectionDTO()
+        {
+            Name = GetProjectSectionUpdatedName(),
+        };
+
+        return updateProjectSectionTestDTO;
+    }
+
     public static string GetProjectSectionTestName()
     {
         string projectSectionTestName = "Teste";
@@ -93,5 +103,15 @@ public class ProjectSectionUtils : BaseUtils
         string projectSectionUpdatedName = "Updated Project Section Name";
 
         return projectSectionUpdatedName;
+    }
+
+    public static MoveProjectSectionToProjectDTO CreateMoveProjectSectionToProjectTestDTO(int? projectId)
+    {
+        MoveProjectSectionToProjectDTO moveProjectSectionToProjectDTO = new MoveProjectSectionToProjectDTO()
+        {
+            ProjectId = projectId ?? 1,
+        };
+
+        return moveProjectSectionToProjectDTO;
     }
 }

@@ -6,24 +6,23 @@ using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.ProjectSection;
 using Api.Models.Responses.ProjectSection;
 using Api.Models.Shared;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Api.Services;
 
-public class ProjectSectionService
+public class ProjectSectionService : BaseService
 {
     private readonly TodoManagerContext todoManagerContext;
-    private readonly ProjectService projectService;
 
-    public ProjectSectionService(TodoManagerContext todoManagerContext, ProjectService projectService)
+    public ProjectSectionService(TodoManagerContext todoManagerContext)
     {
         this.todoManagerContext = todoManagerContext;
-        this.projectService = projectService;
     }
 
     public CreateProjectSectionResponse CreateProjectSection(CreateProjectSectionDTO createSectionDTO)
     {
-        Project project = this.projectService.FindProjectById(createSectionDTO.ProjectId)
+        Project project = FindById<Project>(todoManagerContext.Projects, createSectionDTO.ProjectId)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
@@ -43,7 +42,7 @@ public class ProjectSectionService
 
             CreateProjectSectionResponse createSectionResponse = new CreateProjectSectionResponse()
             {
-                Message = ProjectSectionConstants.CreateSectionSuccessMessage,
+                Message = ProjectSectionConstants.CreateProjectSectionSuccessMessage,
                 Variant = AlertVariant.Success,
             };
 
@@ -55,7 +54,7 @@ public class ProjectSectionService
 
             throw new InternalServerErrorHttpException
             (
-                ProjectSectionConstants.CreateSectionInternalServerErrorMessage,
+                ProjectSectionConstants.CreateProjectSectionInternalServerErrorMessage,
                 exception.Message,
                 exception,
                 AlertVariant.Error
@@ -97,16 +96,7 @@ public class ProjectSectionService
 
     public CheckProjectSectionNameChangedResponse CheckProjectSectionNameChanged(CheckProjectSectionNameChangedQuery query)
     {
-        ProjectSection projectSection = this.todoManagerContext
-            .ProjectSections
-            .AsEnumerable<ProjectSection>()
-            .Where<ProjectSection>((ProjectSection currentProjectSection) =>
-            {
-                bool validId = currentProjectSection.Id == query.Id;
-
-                return validId;
-            })
-            .FirstOrDefault<ProjectSection>()
+        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, query.Id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
         bool nameChanged = projectSection.Name != query.Name;
@@ -127,16 +117,7 @@ public class ProjectSectionService
 
     public UpdateProjectSectionByIdResponse UpdateProjectSectionById(int id, UpdateProjectSectionDTO updateProjectSectionDTO)
     {
-        ProjectSection projectSection = this.todoManagerContext
-            .ProjectSections
-            .AsEnumerable<ProjectSection>()
-            .Where<ProjectSection>((ProjectSection currentProjectSection) =>
-            {
-                bool validId = currentProjectSection.Id == id;
-
-                return validId;
-            })
-            .FirstOrDefault<ProjectSection>()
+        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
         bool nameChanged = projectSection.Name != updateProjectSectionDTO.Name;
@@ -173,7 +154,179 @@ public class ProjectSectionService
 
             throw new InternalServerErrorHttpException
             (
-                ProjectSectionConstants.UpdateProjectInternalServerErrorMessage,
+                ProjectSectionConstants.UpdateProjectSectionInternalServerErrorMessage,
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
+
+    public ArchiveProjectSectionResponse Archive(int id)
+    {
+        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+            ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
+
+        if (projectSection.Archived)
+        {
+            return new ArchiveProjectSectionResponse()
+            {
+                Message = ProjectSectionConstants.ProjectSectionAllreadyArchivedMessage,
+                Variant = AlertVariant.Info,
+            };
+        }
+
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            projectSection.Archived = true;
+            projectSection.UpdatedAt = DateTime.Now;
+
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new ArchiveProjectSectionResponse()
+            {
+                Message = ProjectSectionConstants.ArchiveProjectSectionSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException
+            (
+                ProjectSectionConstants.ArchiveProjectSectionInternalServerErrorMessage,
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
+
+    public UnarchiveProjectSectionResponse Unarchive(int id)
+    {
+        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+            ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
+
+        if (!projectSection.Archived)
+        {
+            return new UnarchiveProjectSectionResponse()
+            {
+                Message = ProjectSectionConstants.ProjectSectionAllreadyUnarchivedMessage,
+                Variant = AlertVariant.Info,
+            };
+        }
+
+        using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            projectSection.Archived = false;
+            projectSection.UpdatedAt = DateTime.Now;
+
+            this.todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new UnarchiveProjectSectionResponse()
+            {
+                Message = ProjectSectionConstants.UnarchiveProjectSectionSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException
+            (
+                ProjectSectionConstants.UnarchiveProjectSectionInternalServerErrorMessage,
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
+
+    public DeleteProjectSectionResponse Delete(int id)
+    {
+        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+            ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
+
+        using IDbContextTransaction todoManagerContextTransaction = todoManagerContext.Database.BeginTransaction();
+
+        try
+        {
+            todoManagerContext.ProjectSections.Remove(projectSection);
+            todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new DeleteProjectSectionResponse()
+            {
+                Message = ProjectSectionConstants.DeleteProjectSectionSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException
+            (
+                ProjectSectionConstants.DeleteProjectSectionInternalServerErrorMessage,
+                exception.Message,
+                exception,
+                AlertVariant.Error
+            );
+        }
+    }
+
+    public MoveProjectSectionToProjectResponse MoveTo(int id, MoveProjectSectionToProjectDTO moveProjectSectionToProjectDTO)
+    {
+        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+            ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
+
+        Project project = FindById<Project>(todoManagerContext.Projects, moveProjectSectionToProjectDTO.ProjectId)
+            ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
+
+        using IDbContextTransaction todoManagerContextTransaction = todoManagerContext.Database.BeginTransaction();
+
+        if (projectSection.ProjectId == project.Id)
+        {
+            return new MoveProjectSectionToProjectResponse()
+            {
+                Message = ProjectSectionConstants.ProjectSectionAllreadyBelongsToProject,
+                Variant = AlertVariant.Info,
+            };
+        }
+
+        try
+        {
+            projectSection.ProjectId = project.Id;
+            projectSection.UpdatedAt = DateTime.Now;
+
+            todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new MoveProjectSectionToProjectResponse()
+            {
+                Message = ProjectSectionConstants.MoveProjectSectionToProjectSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
+        }
+        catch (Exception exception)
+        {
+            todoManagerContextTransaction.Rollback();
+
+            throw new InternalServerErrorHttpException
+            (
+                ProjectSectionConstants.MoveProjectSectionToProjectSuccessMessage,
                 exception.Message,
                 exception,
                 AlertVariant.Error
