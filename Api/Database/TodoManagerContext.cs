@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Api.Models.Database;
+using Task = Api.Models.Database.Task;
 
 namespace Api.Database;
 
@@ -10,6 +11,7 @@ public class TodoManagerContext : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<ExceptionLog> ExceptionLogs { get; set; }
     public DbSet<ProjectSection> ProjectSections { get; set; }
+    public DbSet<Task> Tasks { get; set; }
 
     public TodoManagerContext(DbContextOptions<TodoManagerContext> options) : base(options) { }
 
@@ -135,6 +137,35 @@ public class TodoManagerContext : DbContext
             projectSectionEntity.HasOne<Project>((ProjectSection projectSection) => projectSection.Project)
                 .WithMany((Project project) => project.ProjectSections)
                 .HasForeignKey((ProjectSection projectSection) => projectSection.ProjectId);
+        });
+
+        modelBuilder.Entity<Task>((EntityTypeBuilder<Task> taskEntity) =>
+        {
+            taskEntity.ToTable<Task>("task");
+
+            taskEntity.Property<int>((Task task) => task.Id).HasColumnName<int>("id");
+
+            taskEntity.Property<int?>((Task task) => task.ProjectId).HasColumnName<int?>("project_id");
+
+            taskEntity.Property<int?>((Task task) => task.ProjectSectionId).HasColumnName<int?>("project_section_id");
+
+            taskEntity.Property<string>((Task task) => task.Name).HasColumnName<string>("name");
+
+            taskEntity.Property<bool>((Task task) => task.Archived).HasColumnName<bool>("archived").HasDefaultValue<bool>(false);
+
+            taskEntity.Property<DateTime>((Task task) => task.CreatedAt).HasColumnName<DateTime>("created_at")
+                .HasDefaultValueSql<DateTime>("getdate()");
+
+            taskEntity.Property<DateTime?>((Task task) => task.UpdatedAt).HasColumnName<DateTime?>("updated_at");
+
+            taskEntity.HasKey((Task task) => task.Id);
+
+            taskEntity.HasOne<Project>((Task task) => task.Project).WithMany((Project project) => project.Tasks)
+                .HasForeignKey((Task task) => task.ProjectId);
+            
+            taskEntity.HasOne<ProjectSection>((Task task) => task.ProjectSection)
+                .WithMany((ProjectSection projectSection) => projectSection.Tasks)
+                .HasForeignKey((Task task) => task.ProjectSectionId);
         });
     }
 }

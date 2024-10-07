@@ -11,4 +11,5 @@ public class ProjectSection : IBaseIdentifierEntity
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Project Project { get; set; }
+    public ICollection<Task> Tasks { get; set; }
 }
