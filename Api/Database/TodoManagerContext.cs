@@ -151,6 +151,8 @@ public class TodoManagerContext : DbContext
 
             taskEntity.Property<string>((Task task) => task.Name).HasColumnName<string>("name");
 
+            taskEntity.Property<string?>((Task task) => task.Description).HasColumnName<string?>("description");
+
             taskEntity.Property<bool>((Task task) => task.Archived).HasColumnName<bool>("archived").HasDefaultValue<bool>(false);
 
             taskEntity.Property<DateTime>((Task task) => task.CreatedAt).HasColumnName<DateTime>("created_at")
