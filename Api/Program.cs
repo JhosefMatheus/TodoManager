@@ -35,6 +35,7 @@ public class Program
 
         builder.Services.AddScoped<ProjectService>();
         builder.Services.AddScoped<ProjectSectionService>();
+        builder.Services.AddScoped<TaskTypeService>();
 
         WebApplication app = builder.Build();
 

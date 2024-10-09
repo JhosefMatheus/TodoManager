@@ -12,6 +12,7 @@ public class TodoManagerContext : DbContext
     public DbSet<ExceptionLog> ExceptionLogs { get; set; }
     public DbSet<ProjectSection> ProjectSections { get; set; }
     public DbSet<Task> Tasks { get; set; }
+    public DbSet<TaskType> TaskTypes { get; set; }
 
     public TodoManagerContext(DbContextOptions<TodoManagerContext> options) : base(options) { }
 
@@ -149,6 +150,8 @@ public class TodoManagerContext : DbContext
 
             taskEntity.Property<int?>((Task task) => task.ProjectSectionId).HasColumnName<int?>("project_section_id");
 
+            taskEntity.Property<int>((Task task) => task.TaskTypeId).HasColumnName<int>("task_type_id");
+
             taskEntity.Property<string>((Task task) => task.Name).HasColumnName<string>("name");
 
             taskEntity.Property<string?>((Task task) => task.Description).HasColumnName<string?>("description");
@@ -164,10 +167,25 @@ public class TodoManagerContext : DbContext
 
             taskEntity.HasOne<Project>((Task task) => task.Project).WithMany((Project project) => project.Tasks)
                 .HasForeignKey((Task task) => task.ProjectId);
-            
+
             taskEntity.HasOne<ProjectSection>((Task task) => task.ProjectSection)
                 .WithMany((ProjectSection projectSection) => projectSection.Tasks)
                 .HasForeignKey((Task task) => task.ProjectSectionId);
+
+            taskEntity.HasOne<TaskType>((Task task) => task.TaskType)
+                .WithMany((TaskType taskType) => taskType.Tasks)
+                .HasForeignKey((Task task) => task.TaskTypeId);
+        });
+
+        modelBuilder.Entity<TaskType>((EntityTypeBuilder<TaskType> taskTypeEntity) =>
+        {
+            taskTypeEntity.ToTable<TaskType>("task_type");
+
+            taskTypeEntity.Property<int>((TaskType taskType) => taskType.Id).HasColumnName<int>("id");
+
+            taskTypeEntity.Property<string>((TaskType taskType) => taskType.Name).HasColumnName<string>("name");
+
+            taskTypeEntity.HasKey((TaskType taskType) => taskType.Id);
         });
     }
 }

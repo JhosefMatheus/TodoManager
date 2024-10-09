@@ -7,36 +7,19 @@ using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.ProjectSection;
 using Api.Models.Responses.ProjectSection;
 using Api.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Tests.Utils;
 
 namespace Tests;
 
 [TestClass]
-public class ProjectSectionTests
+public class ProjectSectionTests : BaseTests
 {
     private readonly ProjectSectionService projectSectionService;
     private readonly ProjectService projectService;
-    private readonly ServiceProvider serviceProvider;
 
-    public ProjectSectionTests()
+    public ProjectSectionTests() : base()
     {
-        ServiceCollection services = new ServiceCollection();
-
-        services.AddDbContext<TodoManagerContext>(options =>
-        {
-            options
-                .UseInMemoryDatabase("TestTodoManagerDatabase")
-                .ConfigureWarnings((WarningsConfigurationBuilder warningsConfigurationBuilder) => warningsConfigurationBuilder.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-        });
-
-        services.AddScoped<ProjectSectionService>();
-        services.AddScoped<ProjectService>();
-
-        serviceProvider = services.BuildServiceProvider();
-
         projectSectionService = serviceProvider.GetService<ProjectSectionService>()
             ?? throw new NullReferenceException("Não foi possível pegar o serviço de seções.");
 

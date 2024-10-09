@@ -6,34 +6,18 @@ using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.Project;
 using Api.Models.Responses.Project;
 using Api.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Tests.Utils;
 
 namespace Tests;
 
 [TestClass]
-public class ProjectTests
+public class ProjectTests : BaseTests
 {
     private readonly ProjectService projectService;
-    private readonly ServiceProvider serviceProvider;
 
-    public ProjectTests()
+    public ProjectTests() : base()
     {
-        ServiceCollection services = new ServiceCollection();
-
-        services.AddDbContext<TodoManagerContext>(options =>
-        {
-            options
-                .UseInMemoryDatabase("TestTodoManagerDatabase")
-                .ConfigureWarnings((WarningsConfigurationBuilder warningsConfigurationBuilder) => warningsConfigurationBuilder.Ignore(InMemoryEventId.TransactionIgnoredWarning));
-        });
-
-        services.AddScoped<ProjectService>();
-
-        serviceProvider = services.BuildServiceProvider();
-
         projectService = serviceProvider.GetService<ProjectService>()
             ?? throw new NullReferenceException("Não foi possível pegar o serviço de projetos.");
     }
