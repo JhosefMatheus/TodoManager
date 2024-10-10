@@ -1,4 +1,5 @@
 using Api.Models.DTO.Task;
+using Api.Models.Responses.Task;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,10 @@ public class TaskController : ControllerBase
     [HttpPost]
     public ActionResult Create([FromBody] BaseCreateTaskDTO createTaskDTO)
     {
+        CreateTaskResponse createTaskResponse = taskService.Create(createTaskDTO);
+
+        object response = createTaskResponse.ToJson();
+
         return Ok();
     }
 }

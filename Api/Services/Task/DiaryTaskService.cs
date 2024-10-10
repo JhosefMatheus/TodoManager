@@ -2,6 +2,7 @@ using Api.Database;
 using Api.Models.DTO.Task;
 using Api.Models.Interfaces.Services;
 using Api.Models.Responses.Task;
+using Api.Models.Shared;
 
 namespace Api.Services.Task;
 
@@ -16,8 +17,12 @@ public class DiaryTaskService : BaseService, ITaskService
 
     public CreateTaskResponse Create(BaseCreateTaskDTO baseCreateTaskDTO)
     {
-        CreateDiaryTaskDTO createDiaryTaskDTO = (CreateDiaryTaskDTO)baseCreateTaskDTO;
+        CreateDiaryTaskDTO.FromBaseCreateTaskDTO(baseCreateTaskDTO);
 
-        
+        return new CreateTaskResponse()
+        {
+            Message = "Tarefa criado com sucesso.",
+            Variant = AlertVariant.Success,
+        };
     }
 }
