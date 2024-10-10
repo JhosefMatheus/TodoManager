@@ -5,6 +5,7 @@ using Api.Filters.Exceptions;
 using Api.Services;
 using Api.Services.Filters.Exceptions;
 using Api.Services.Loggers.Exceptions.Filters;
+using Api.Services.Task;
 
 namespace Api;
 
@@ -36,6 +37,8 @@ public class Program
         builder.Services.AddScoped<ProjectService>();
         builder.Services.AddScoped<ProjectSectionService>();
         builder.Services.AddScoped<TaskTypeService>();
+        builder.Services.AddScoped<TaskService>();
+        builder.Services.AddScoped<DiaryTaskService>();
 
         WebApplication app = builder.Build();
 
