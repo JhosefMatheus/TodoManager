@@ -79,7 +79,7 @@ public class ProjectTests : BaseTests
 
             ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             checkProjectNameChangedQueryTest = ProjectUtils
                 .CreateCheckProjectNameChangedQueryTest(createdProject.Name, createdProject.Id);
@@ -115,7 +115,7 @@ public class ProjectTests : BaseTests
 
             ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             GetProjectByIdResponse getProjectByIdResponse = projectService.GetProjectById(createdProject.Id);
 
@@ -152,7 +152,7 @@ public class ProjectTests : BaseTests
 
             ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             UpdateProjectResponse updateProjectResponse = projectService.UpdateProject(createdProject.Id, updateProjectTestDTO);
 
@@ -189,7 +189,7 @@ public class ProjectTests : BaseTests
 
             ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             DeleteProjectResponse deleteProjectResponse = projectService.DeleteProject(createdProject.Id);
 
@@ -219,7 +219,7 @@ public class ProjectTests : BaseTests
 
             ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             ArchiveProjectResponse archiveProjectResponse = projectService.ArchiveProject(createdProject.Id);
 
@@ -258,7 +258,7 @@ public class ProjectTests : BaseTests
 
             ProjectUtils.CreateProject(projectService);
 
-            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             UnarchiveProjectResponse unarchiveProjectResponse = projectService.UnarchiveProject(createdProject.Id);
 

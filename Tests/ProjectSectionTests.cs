@@ -69,7 +69,7 @@ public class ProjectSectionTests : BaseTests
 
             ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
 
-            Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             checkProjectSectionExistsQuery = ProjectSectionUtils.CreateProjectSectionExistsQueryTest(null, createdProject.Id);
 
@@ -103,7 +103,7 @@ public class ProjectSectionTests : BaseTests
 
             ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
 
-            ProjectSection createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+            ProjectSectionEntity createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
 
             checkProjectSectionNameChangedQuery = ProjectSectionUtils
                 .CreateProjectSectionNameChangedQueryTest(null, createdProjectSection.Id);
@@ -150,7 +150,7 @@ public class ProjectSectionTests : BaseTests
 
             ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
 
-            ProjectSection createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+            ProjectSectionEntity createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
 
             UpdateProjectSectionByIdResponse updateProjectSectionByIdResponse = projectSectionService
                 .UpdateProjectSectionById(createdProjectSection.Id, updateProjectSectionTestDTO);
@@ -187,7 +187,7 @@ public class ProjectSectionTests : BaseTests
 
             ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
 
-            ProjectSection createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+            ProjectSectionEntity createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
 
             ArchiveProjectSectionResponse archiveProjectSectionResponse = projectSectionService.Archive(createdProjectSection.Id);
 
@@ -222,7 +222,7 @@ public class ProjectSectionTests : BaseTests
 
             ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
 
-            ProjectSection createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+            ProjectSectionEntity createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
 
             UnarchiveProjectSectionResponse unarchiveProjectSectionResponse = projectSectionService
                 .Unarchive(createdProjectSection.Id);
@@ -260,7 +260,7 @@ public class ProjectSectionTests : BaseTests
 
             ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
 
-            ProjectSection createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+            ProjectSectionEntity createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
 
             DeleteProjectSectionResponse deleteProjectSectionResponse = projectSectionService.Delete(createdProjectSection.Id);
 
@@ -291,9 +291,9 @@ public class ProjectSectionTests : BaseTests
 
             ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
 
-            ProjectSection createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+            ProjectSectionEntity createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
 
-            Project projectSectionProject = ProjectUtils.GetFirstProject(serviceProvider);
+            ProjectEntity projectSectionProject = ProjectUtils.GetFirstProject(serviceProvider);
 
             Assert.ThrowsException<NotFoundHttpException>(
                 () => projectSectionService.MoveTo(createdProjectSection.Id, moveProjectSectionToProjectTestDTO),
@@ -309,16 +309,16 @@ public class ProjectSectionTests : BaseTests
 
             TodoManagerContext todoManagerContext = serviceProvider.GetService<TodoManagerContext>()!;
 
-            Project destinyProject = todoManagerContext
+            ProjectEntity destinyProject = todoManagerContext
                 .Projects
-                .AsEnumerable<Project>()
-                .Where<Project>((Project currentProject) =>
+                .AsEnumerable<ProjectEntity>()
+                .Where<ProjectEntity>((ProjectEntity currentProject) =>
                 {
                     bool validName = currentProject.Name == "Destiny project";
 
                     return validName;
                 })
-                .FirstOrDefault<Project>()!;
+                .FirstOrDefault<ProjectEntity>()!;
 
             moveProjectSectionToProjectTestDTO = ProjectSectionUtils
                 .CreateMoveProjectSectionToProjectTestDTO(projectSectionProject.Id);

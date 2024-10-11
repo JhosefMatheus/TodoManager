@@ -8,11 +8,10 @@ public abstract class BaseHttpException : BaseException
 
     public BaseHttpException(
         string baseMessage,
-        string errorMessage,
         Exception baseInnerException,
         AlertVariant variant,
         int status
-    ) : base(baseMessage, errorMessage, baseInnerException, variant)
+    ) : base(baseMessage, baseInnerException, variant)
     {
         Status = status;
     }

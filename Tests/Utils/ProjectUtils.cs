@@ -47,11 +47,11 @@ public class ProjectUtils : BaseUtils
         todoManagerContext.SaveChanges();
     }
 
-    public static Project GetFirstProject(ServiceProvider serviceProvider)
+    public static ProjectEntity GetFirstProject(ServiceProvider serviceProvider)
     {
         TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
 
-        Project firstProject = todoManagerContext.Projects.First<Project>();
+        ProjectEntity firstProject = todoManagerContext.Projects.First<ProjectEntity>();
 
         return firstProject;
     }

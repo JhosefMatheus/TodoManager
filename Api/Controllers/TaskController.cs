@@ -1,6 +1,6 @@
 using Api.Models.DTO.Task;
 using Api.Models.Responses.Task;
-using Api.Services;
+using Api.Services.Task;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -10,19 +10,21 @@ namespace Api.Controllers;
 public class TaskController : ControllerBase
 {
     private readonly TaskService taskService;
+    private readonly DiaryTaskService diaryTaskService;
 
-    public TaskController(TaskService taskService)
+    public TaskController(TaskService taskService, DiaryTaskService diaryTaskService)
     {
         this.taskService = taskService;
+        this.diaryTaskService = diaryTaskService;
     }
 
-    [HttpPost]
-    public ActionResult Create([FromBody] BaseCreateTaskDTO createTaskDTO)
+    [HttpPost("diary-task")]
+    public ActionResult Create([FromBody] CreateDiaryTaskDTO createTaskDTO)
     {
-        CreateTaskResponse createTaskResponse = taskService.Create(createTaskDTO);
+        CreateTaskResponse createTaskResponse = diaryTaskService.Create(createTaskDTO);
 
         object response = createTaskResponse.ToJson();
 
-        return Ok();
+        return Ok(response);
     }
 }

@@ -20,7 +20,7 @@ public class TaskTypeService : BaseService
         List<TaskTypeFromAllTaskTypesResponse> taskTypes = todoManagerContext
             .TaskTypes
             .AsEnumerable()
-            .Select<TaskType, TaskTypeFromAllTaskTypesResponse>((TaskType taskType) =>
+            .Select<TaskTypeEntity, TaskTypeFromAllTaskTypesResponse>((TaskTypeEntity taskType) =>
             {
                 return new TaskTypeFromAllTaskTypesResponse()
                 {

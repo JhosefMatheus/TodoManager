@@ -27,7 +27,7 @@ public class ProjectSectionUtils : BaseUtils
     {
         ProjectUtils.CreateProject(projectService);
 
-        Project createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+        ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
 
         CreateProjectSectionDTO createProjectSectionTestDTO = CreateProjectSectionTestDTO(createdProject.Id);
 
@@ -89,11 +89,11 @@ public class ProjectSectionUtils : BaseUtils
         return projectSectionTestName;
     }
 
-    public static ProjectSection GetFirstProjectSection(ServiceProvider serviceProvider)
+    public static ProjectSectionEntity GetFirstProjectSection(ServiceProvider serviceProvider)
     {
         TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
 
-        ProjectSection projectSection = todoManagerContext.ProjectSections.First<ProjectSection>();
+        ProjectSectionEntity projectSection = todoManagerContext.ProjectSections.First<ProjectSectionEntity>();
 
         return projectSection;
     }

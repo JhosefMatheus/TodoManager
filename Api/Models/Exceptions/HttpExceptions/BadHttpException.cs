@@ -6,10 +6,9 @@ public class BadHttpException : BaseHttpException
 {
     public BadHttpException(
         string baseMessage,
-        string errorMessage,
         Exception baseInnerException,
         AlertVariant variant
-    ) : base(baseMessage, errorMessage, baseInnerException, variant, 400) { }
+    ) : base(baseMessage, baseInnerException, variant, 400) { }
 
     public BadHttpException(
         string baseMessage,

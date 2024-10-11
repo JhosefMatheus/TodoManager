@@ -25,7 +25,7 @@ public class ProjectService : BaseService
 
         try
         {
-            Project newProject = new Project()
+            ProjectEntity newProject = new ProjectEntity()
             {
                 Name = createProjectDTO.Name,
             };
@@ -50,7 +50,6 @@ public class ProjectService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectConstants.CreateProjectInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -61,8 +60,8 @@ public class ProjectService : BaseService
     {
         bool projectExists = this.todoManagerContext
             .Projects
-            .AsEnumerable<Project>()
-            .Any((Project project) =>
+            .AsEnumerable<ProjectEntity>()
+            .Any((ProjectEntity project) =>
             {
                 bool validName = project.Name == name;
 
@@ -85,7 +84,7 @@ public class ProjectService : BaseService
 
     public GetProjectByIdResponse GetProjectById(int id)
     {
-        Project project = FindById<Project>(todoManagerContext.Projects, id)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         GetProjectByIdResponse response = new GetProjectByIdResponse()
@@ -107,7 +106,7 @@ public class ProjectService : BaseService
 
     public CheckProjectNameChangedResponse CheckProjectNameChanged(CheckProjectNameChangedQuery query)
     {
-        Project project = FindById<Project>(todoManagerContext.Projects, query.Id)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, query.Id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         bool nameChanged = project.Name != query.Name;
@@ -128,7 +127,7 @@ public class ProjectService : BaseService
 
     public UpdateProjectResponse UpdateProject(int id, UpdateProjectDTO updateProjectDTO)
     {
-        Project project = FindById<Project>(todoManagerContext.Projects, id)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         bool projectNameChanged = updateProjectDTO.Name != project.Name;
@@ -166,7 +165,6 @@ public class ProjectService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectConstants.UpdateProjectInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -175,7 +173,7 @@ public class ProjectService : BaseService
 
     public DeleteProjectResponse DeleteProject(int id)
     {
-        Project project = FindById<Project>(todoManagerContext.Projects, id)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
@@ -200,7 +198,6 @@ public class ProjectService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectConstants.DeleteProjectInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -209,7 +206,7 @@ public class ProjectService : BaseService
 
     public ArchiveProjectResponse ArchiveProject(int id)
     {
-        Project project = FindById<Project>(todoManagerContext.Projects, id)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         if (project.Archived)
@@ -243,7 +240,6 @@ public class ProjectService : BaseService
 
             throw new InternalServerErrorHttpException(
                 ProjectConstants.ArchiveProjectInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -252,7 +248,7 @@ public class ProjectService : BaseService
 
     public UnarchiveProjectResponse UnarchiveProject(int id)
     {
-        Project project = FindById<Project>(todoManagerContext.Projects, id)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, id)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         if (!project.Archived)
@@ -284,7 +280,6 @@ public class ProjectService : BaseService
         {
             throw new InternalServerErrorHttpException(
                 ProjectConstants.UnarchiveProjectInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -293,7 +288,7 @@ public class ProjectService : BaseService
 
     public GetAllProjectsResponse GetAllProjects()
     {
-        List<Project> projects = this.todoManagerContext.Projects.ToList<Project>();
+        List<ProjectEntity> projects = this.todoManagerContext.Projects.ToList<ProjectEntity>();
 
         string getAllProjectsMessage = projects.Count > 0
             ? ProjectConstants.GetAllProjectsSuccessMessage
@@ -305,7 +300,7 @@ public class ProjectService : BaseService
         {
             Message = getAllProjectsMessage,
             Variant = getAllProjectsAlertVariant,
-            Projects = projects.Select<Project, ProjectFromAllProjectsResponse>((Project project) =>
+            Projects = projects.Select<ProjectEntity, ProjectFromAllProjectsResponse>((ProjectEntity project) =>
             {
                 return new ProjectFromAllProjectsResponse()
                 {

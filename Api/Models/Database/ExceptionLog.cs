@@ -2,7 +2,7 @@ using Api.Models.Interfaces.Database;
 
 namespace Api.Models.Database;
 
-public class ExceptionLog : IBaseIdentifierEntity
+public class ExceptionLogEntity : IBaseIdentifierEntity
 {
     public int Id { get; set; }
     public string Endpoint { get; set; }

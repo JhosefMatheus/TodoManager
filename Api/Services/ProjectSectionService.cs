@@ -6,7 +6,6 @@ using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Queries.ProjectSection;
 using Api.Models.Responses.ProjectSection;
 using Api.Models.Shared;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Api.Services;
@@ -22,14 +21,14 @@ public class ProjectSectionService : BaseService
 
     public CreateProjectSectionResponse CreateProjectSection(CreateProjectSectionDTO createSectionDTO)
     {
-        Project project = FindById<Project>(todoManagerContext.Projects, createSectionDTO.ProjectId)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, createSectionDTO.ProjectId)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         using IDbContextTransaction todoManagerContextTransaction = this.todoManagerContext.Database.BeginTransaction();
 
         try
         {
-            ProjectSection section = new ProjectSection
+            ProjectSectionEntity section = new ProjectSectionEntity
             {
                 ProjectId = project.Id,
                 Name = createSectionDTO.Name,
@@ -55,7 +54,6 @@ public class ProjectSectionService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectSectionConstants.CreateProjectSectionInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -64,10 +62,10 @@ public class ProjectSectionService : BaseService
 
     public CheckProjectSectionExistsResponse CheckProjectSectionExists(CheckProjectSectionExistsQuery query)
     {
-        ProjectSection? projectSection = this.todoManagerContext
+        ProjectSectionEntity? projectSection = this.todoManagerContext
             .ProjectSections
-            .AsEnumerable<ProjectSection>()
-            .Where<ProjectSection>((ProjectSection currentProjectSection) =>
+            .AsEnumerable<ProjectSectionEntity>()
+            .Where<ProjectSectionEntity>((ProjectSectionEntity currentProjectSection) =>
             {
                 bool validProjectId = currentProjectSection.ProjectId == query.ProjectId;
                 bool validProjectSectionName = currentProjectSection.Name == query.Name;
@@ -76,7 +74,7 @@ public class ProjectSectionService : BaseService
 
                 return validProjectSection;
             })
-            .FirstOrDefault<ProjectSection>();
+            .FirstOrDefault<ProjectSectionEntity>();
 
         string checkProjectSectionçExistsResponseMessage = projectSection != null
             ? ProjectSectionConstants.ProjectSectionAllreadyExistsMessage
@@ -96,7 +94,7 @@ public class ProjectSectionService : BaseService
 
     public CheckProjectSectionNameChangedResponse CheckProjectSectionNameChanged(CheckProjectSectionNameChangedQuery query)
     {
-        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, query.Id)
+        ProjectSectionEntity projectSection = FindById<ProjectSectionEntity>(todoManagerContext.ProjectSections, query.Id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
         bool nameChanged = projectSection.Name != query.Name;
@@ -117,7 +115,7 @@ public class ProjectSectionService : BaseService
 
     public UpdateProjectSectionByIdResponse UpdateProjectSectionById(int id, UpdateProjectSectionDTO updateProjectSectionDTO)
     {
-        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+        ProjectSectionEntity projectSection = FindById<ProjectSectionEntity>(todoManagerContext.ProjectSections, id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
         bool nameChanged = projectSection.Name != updateProjectSectionDTO.Name;
@@ -155,7 +153,6 @@ public class ProjectSectionService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectSectionConstants.UpdateProjectSectionInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -164,7 +161,7 @@ public class ProjectSectionService : BaseService
 
     public ArchiveProjectSectionResponse Archive(int id)
     {
-        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+        ProjectSectionEntity projectSection = FindById<ProjectSectionEntity>(todoManagerContext.ProjectSections, id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
         if (projectSection.Archived)
@@ -200,7 +197,6 @@ public class ProjectSectionService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectSectionConstants.ArchiveProjectSectionInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -209,7 +205,7 @@ public class ProjectSectionService : BaseService
 
     public UnarchiveProjectSectionResponse Unarchive(int id)
     {
-        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+        ProjectSectionEntity projectSection = FindById<ProjectSectionEntity>(todoManagerContext.ProjectSections, id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
         if (!projectSection.Archived)
@@ -245,7 +241,6 @@ public class ProjectSectionService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectSectionConstants.UnarchiveProjectSectionInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -254,7 +249,7 @@ public class ProjectSectionService : BaseService
 
     public DeleteProjectSectionResponse Delete(int id)
     {
-        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+        ProjectSectionEntity projectSection = FindById<ProjectSectionEntity>(todoManagerContext.ProjectSections, id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
         using IDbContextTransaction todoManagerContextTransaction = todoManagerContext.Database.BeginTransaction();
@@ -279,7 +274,6 @@ public class ProjectSectionService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectSectionConstants.DeleteProjectSectionInternalServerErrorMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );
@@ -288,10 +282,10 @@ public class ProjectSectionService : BaseService
 
     public MoveProjectSectionToProjectResponse MoveTo(int id, MoveProjectSectionToProjectDTO moveProjectSectionToProjectDTO)
     {
-        ProjectSection projectSection = FindById<ProjectSection>(todoManagerContext.ProjectSections, id)
+        ProjectSectionEntity projectSection = FindById<ProjectSectionEntity>(todoManagerContext.ProjectSections, id)
             ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
 
-        Project project = FindById<Project>(todoManagerContext.Projects, moveProjectSectionToProjectDTO.ProjectId)
+        ProjectEntity project = FindById<ProjectEntity>(todoManagerContext.Projects, moveProjectSectionToProjectDTO.ProjectId)
             ?? throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Error);
 
         using IDbContextTransaction todoManagerContextTransaction = todoManagerContext.Database.BeginTransaction();
@@ -327,7 +321,6 @@ public class ProjectSectionService : BaseService
             throw new InternalServerErrorHttpException
             (
                 ProjectSectionConstants.MoveProjectSectionToProjectSuccessMessage,
-                exception.Message,
                 exception,
                 AlertVariant.Error
             );

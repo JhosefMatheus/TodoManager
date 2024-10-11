@@ -33,7 +33,7 @@ public class ExceptionFilterLoggerService
 
         try
         {
-            ExceptionLog exceptionLog = new ExceptionLog
+            ExceptionLogEntity exceptionLog = new ExceptionLogEntity
             {
                 Endpoint = requestEndpoint,
                 Method = requestMethod,

@@ -6,10 +6,9 @@ public class InternalServerErrorHttpException : BaseHttpException
 {
     public InternalServerErrorHttpException(
         string baseMessage,
-        string errorMessage,
         Exception baseInnerException,
         AlertVariant variant
-    ) : base(baseMessage, errorMessage, baseInnerException, variant, 500) { }
+    ) : base(baseMessage, baseInnerException, variant, 500) { }
 
     public InternalServerErrorHttpException(
         string baseMessage,

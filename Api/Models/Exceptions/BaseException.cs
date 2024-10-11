@@ -11,13 +11,12 @@ public abstract class BaseException : Exception
 
     public BaseException(
         string baseMessage,
-        string errorMessage,
         Exception baseInnerException,
         AlertVariant variant
-    ) : base(errorMessage, baseInnerException)
+    ) : base(baseInnerException.Message, baseInnerException)
     {
         BaseMessage = baseMessage;
-        ErrorMessage = errorMessage;
+        ErrorMessage = baseInnerException.Message;
         BaseInnerException = baseInnerException;
         Variant = variant;
     }

@@ -6,10 +6,9 @@ public class NotFoundHttpException : BaseHttpException
 {
     public NotFoundHttpException(
         string baseMessage,
-        string errorMessage,
         Exception baseInnerException,
         AlertVariant variant
-    ) : base(baseMessage, errorMessage, baseInnerException, variant, 404) { }
+    ) : base(baseMessage, baseInnerException, variant, 404) { }
 
     public NotFoundHttpException(
         string baseMessage,

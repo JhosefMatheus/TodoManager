@@ -4,6 +4,7 @@ using Api.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Api.Migrations
 {
     [DbContext(typeof(TodoManagerContext))]
-    partial class TodoManagerContextModelSnapshot : ModelSnapshot
+    [Migration("20241011132930_CreateTaskDayTable")]
+    partial class CreateTaskDayTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -159,10 +162,8 @@ namespace Api.Migrations
                         .HasColumnName("day");
 
                     b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasColumnName("created_at")
-                        .HasDefaultValueSql("getdate()");
+                        .HasColumnName("created_at");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2")

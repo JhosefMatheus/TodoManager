@@ -2,7 +2,7 @@ using Api.Models.Interfaces.Database;
 
 namespace Api.Models.Database;
 
-public class User : IBaseIdentifierEntity
+public class UserEntity : IBaseIdentifierEntity
 {
     public int Id { get; set; }
     public string Name { get; set; }

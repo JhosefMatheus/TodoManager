@@ -1,5 +1,6 @@
 using Api.Database;
 using Api.Services;
+using Api.Services.Task;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,8 @@ public abstract class BaseTests
         services.AddScoped<ProjectSectionService>();
         services.AddScoped<ProjectService>();
         services.AddScoped<TaskTypeService>();
+        services.AddScoped<TaskService>();
+        services.AddScoped<DiaryTaskService>();
 
         serviceProvider = services.BuildServiceProvider();
     }

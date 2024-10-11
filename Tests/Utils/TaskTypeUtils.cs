@@ -19,7 +19,7 @@ public class TaskTypeUtils : BaseUtils
     {
         TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
 
-        TaskType DiaryTaskType = new TaskType()
+        TaskTypeEntity DiaryTaskType = new TaskTypeEntity()
         {
             Name = "Diária"
         };
