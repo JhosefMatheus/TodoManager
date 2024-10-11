@@ -16,22 +16,6 @@ public class TodoManagerContext : DbContext
 
     public TodoManagerContext(DbContextOptions<TodoManagerContext> options) : base(options) { }
 
-    public static DbContextOptions<TodoManagerContext> CreateDbContextOptions()
-    {
-        IConfigurationRoot configuration = new ConfigurationBuilder()
-             .SetBasePath(Directory.GetCurrentDirectory())
-             .AddJsonFile("appsettings.Development.json")
-             .Build();
-
-        DbContextOptionsBuilder<TodoManagerContext> optionsBuilder = new DbContextOptionsBuilder<TodoManagerContext>();
-
-        optionsBuilder.UseSqlServer(configuration.GetConnectionString("TodoManager"));
-
-        DbContextOptions<TodoManagerContext> options = optionsBuilder.Options;
-
-        return options;
-    }
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserEntity>((EntityTypeBuilder<UserEntity> userEntity) =>
