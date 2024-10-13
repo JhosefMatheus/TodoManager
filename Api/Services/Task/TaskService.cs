@@ -28,14 +28,14 @@ public class TaskService : BaseService
 
         using IDbContextTransaction todoManagerContextTransaction = todoManagerContext.Database.BeginTransaction();
 
-        ProjectEntity? projectEntity = FindById<ProjectEntity>(todoManagerContext.Projects, (int)moveTaskToDTO.ProjectId!);
-        ProjectSectionEntity? projectSectionEntity = FindById<ProjectSectionEntity>(
-            todoManagerContext.ProjectSections,
-            (int)moveTaskToDTO.ProjectSectionId!
-        );
-
         if (hasProjectId && hasProjectSectionId)
         {
+            ProjectEntity? projectEntity = FindById<ProjectEntity>(todoManagerContext.Projects, (int)moveTaskToDTO.ProjectId!);
+            ProjectSectionEntity? projectSectionEntity = FindById<ProjectSectionEntity>(
+                todoManagerContext.ProjectSections,
+                (int)moveTaskToDTO.ProjectSectionId!
+            );
+
             if (projectEntity == null)
             {
                 throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Warning);
@@ -74,6 +74,11 @@ public class TaskService : BaseService
         }
         else if (hasProjectSectionId)
         {
+            ProjectSectionEntity? projectSectionEntity = FindById<ProjectSectionEntity>(
+                todoManagerContext.ProjectSections,
+                (int)moveTaskToDTO.ProjectSectionId!
+            );
+
             if (projectSectionEntity == null)
             {
                 throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Warning);
@@ -106,6 +111,8 @@ public class TaskService : BaseService
         }
         else if (hasProjectId)
         {
+            ProjectEntity? projectEntity = FindById<ProjectEntity>(todoManagerContext.Projects, (int)moveTaskToDTO.ProjectId!);
+
             if (projectEntity == null)
             {
                 throw new NotFoundHttpException(ProjectConstants.ProjectNotFoundMessage, AlertVariant.Warning);
@@ -138,10 +145,18 @@ public class TaskService : BaseService
         }
         else
         {
-            throw new InternalServerErrorHttpException(
-                TaskConstants.MoveTaskProjectIdProjectSectionIdNotProvidedMessage,
-                AlertVariant.Error
-            );
+            taskEntity.ProjectId = null;
+            taskEntity.ProjectSectionId = null;
+
+            todoManagerContext.SaveChanges();
+
+            todoManagerContextTransaction.Commit();
+
+            return new MoveTaskToResponse()
+            {
+                Message = TaskConstants.MoveTaskToSuccessMessage,
+                Variant = AlertVariant.Success,
+            };
         }
     }
 }

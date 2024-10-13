@@ -1,4 +1,6 @@
 using Api.Database;
+using Api.Models.Database;
+using Api.Models.DTO.Task;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.Utils;
@@ -12,5 +14,25 @@ public class TaskUtils : BaseUtils
         todoManagerContext.Tasks.RemoveRange(todoManagerContext.Tasks);
 
         todoManagerContext.SaveChanges();
+    }
+
+    public static MoveTaskToDTO CreateMoveTaskToTestDTO(int? projectId, int? projectSectionId)
+    {
+        MoveTaskToDTO moveTaskToTestDTO = new MoveTaskToDTO()
+        {
+            ProjectId = projectId,
+            ProjectSectionId = projectSectionId,
+        };
+
+        return moveTaskToTestDTO;
+    }
+
+    public static TaskEntity GetFirstEntity(ServiceProvider serviceProvider)
+    {
+        TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
+
+        TaskEntity taskEntity = todoManagerContext.Tasks.First();
+
+        return taskEntity;
     }
 }
