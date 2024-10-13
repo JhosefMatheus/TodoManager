@@ -18,7 +18,7 @@ public class Program
         builder.Services.AddControllers((MvcOptions options) =>
         {
             options.Filters.Add<ExceptionFilter>();
-        });
+        }).AddNewtonsoftJson();
 
         builder.Services.AddDbContext<TodoManagerContext>((DbContextOptionsBuilder options) =>
         {

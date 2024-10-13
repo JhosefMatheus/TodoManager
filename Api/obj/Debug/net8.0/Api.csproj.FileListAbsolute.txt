@@ -143,3 +143,6 @@ C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Micros
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
