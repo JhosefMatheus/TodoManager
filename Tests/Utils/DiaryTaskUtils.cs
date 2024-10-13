@@ -1,4 +1,6 @@
+using Api.Database;
 using Api.Models.DTO.Task;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.Utils;
 
@@ -16,5 +18,14 @@ public class DiaryTaskUtils : BaseUtils
         };
 
         return createDiaryTaskTestDTO;
+    }
+
+    public static void ClearTaskDayTable(ServiceProvider serviceProvider)
+    {
+        TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
+
+        todoManagerContext.TaskDays.RemoveRange(todoManagerContext.TaskDays);
+
+        todoManagerContext.SaveChanges();
     }
 }

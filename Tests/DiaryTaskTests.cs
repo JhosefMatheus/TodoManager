@@ -79,6 +79,8 @@ public class DiaryTaskTests : BaseTests
             ProjectSectionUtils.ClearProjectSectionsTable(serviceProvider);
             ProjectUtils.ClearProjectsTable(serviceProvider);
             TaskTypeUtils.ClearTaskTypesTable(serviceProvider);
+            DiaryTaskUtils.ClearTaskDayTable(serviceProvider);
+            TaskUtils.ClearTaskTable(serviceProvider);
         }
     }
 }
