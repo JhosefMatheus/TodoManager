@@ -137,3 +137,9 @@ C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\obj\Debug\net8.0\refint
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\obj\Debug\net8.0\Api.pdb
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\obj\Debug\net8.0\Api.genruntimeconfig.cache
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\obj\Debug\net8.0\ref\Api.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\Microsoft.Extensions.Options.dll

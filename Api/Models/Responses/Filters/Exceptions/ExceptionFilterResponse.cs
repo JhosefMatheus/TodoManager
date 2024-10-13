@@ -12,7 +12,6 @@ public class ExceptionFilterResponse : BaseResponse
         {
             message = Message,
             variant = Variant.ToString(),
-            statusCode = StatusCode,
         };
     }
 }

@@ -17,7 +17,7 @@ public class BaseHttpExceptionFilterService : IExceptionFilterService<BaseHttpEx
 
     public async Task<ExceptionFilterResponse> HandleException(BaseHttpException exception, HttpRequest request)
     {
-        string responseMessage = exception.Message;
+        string responseMessage = exception.BaseMessage;
 
         if (exception.Status == 500)
         {
@@ -27,7 +27,7 @@ public class BaseHttpExceptionFilterService : IExceptionFilterService<BaseHttpEx
         }
 
 
-        ExceptionFilterResponse response = new ExceptionFilterResponse
+        ExceptionFilterResponse response = new ExceptionFilterResponse()
         {
             Message = responseMessage,
             Variant = exception.Variant,

@@ -57,6 +57,13 @@ public class DiaryTaskService : BaseService
 
         List<int> uniqueDays = createDiaryTaskDTO.Days.ToHashSet<int>().ToList<int>();
 
+        bool hasInvalidDays = HasInvalidDays(uniqueDays);
+
+        if (hasInvalidDays)
+        {
+            throw new BadHttpException(DiaryTaskConstants.InvalidDaysProvidedMessage, AlertVariant.Warning);
+        }
+
         using IDbContextTransaction todoManagerContextTransaction = todoManagerContext.Database.BeginTransaction();
 
         try
@@ -113,4 +120,6 @@ public class DiaryTaskService : BaseService
             );
         }
     }
+
+    public bool HasInvalidDays(List<int> days) => days.Any<int>((int day) => day < 1 || day > 7);
 }

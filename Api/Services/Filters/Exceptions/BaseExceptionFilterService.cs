@@ -19,7 +19,7 @@ public class BaseExceptionFilterService : IExceptionFilterService<BaseException>
     {
         LogExceptionResponse logExceptionResponse = await this.exceptionFilterLoggerService.LogException(exception, request);
 
-        ExceptionFilterResponse response = new ExceptionFilterResponse
+        ExceptionFilterResponse response = new ExceptionFilterResponse()
         {
             Message = $"{exception.Message} {logExceptionResponse.Message}",
             Variant = exception.Variant,

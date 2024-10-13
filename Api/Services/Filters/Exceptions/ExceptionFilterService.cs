@@ -42,7 +42,7 @@ public class ExceptionFilterService : IExceptionFilterService<Exception>
         {
             LogExceptionResponse logExceptionResponse = await this.exceptionFilterLoggerService.LogException(exception, request);
 
-            response = new ExceptionFilterResponse
+            response = new ExceptionFilterResponse()
             {
                 Message = $"Erro inesperado no servidor. {logExceptionResponse.Message}",
                 Variant = AlertVariant.Error,
