@@ -4,7 +4,6 @@ using Api.Services.Task;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
-
 [ApiController]
 [Route("task")]
 public class TaskController : ControllerBase
@@ -24,6 +23,16 @@ public class TaskController : ControllerBase
         CreateTaskResponse createTaskResponse = diaryTaskService.Create(createTaskDTO);
 
         object response = createTaskResponse.ToJson();
+
+        return Ok(response);
+    }
+
+    [HttpPatch("{id}/move-to")]
+    public ActionResult MoveTo(int id, [FromBody] MoveTaskToDTO moveTaskToDTO)
+    {
+        MoveTaskToResponse moveTaskToResponse = taskService.MoveTo(id, moveTaskToDTO);
+
+        object response = moveTaskToResponse.ToJson();
 
         return Ok(response);
     }
