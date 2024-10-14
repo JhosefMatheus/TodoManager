@@ -135,4 +135,116 @@ public class TaskTests : BaseTests
             ProjectUtils.ClearProjectsTable(serviceProvider);
         }
     }
+
+    [TestMethod]
+    public void ArchiveTaskTest()
+    {
+        try
+        {
+            Assert.ThrowsException<NotFoundHttpException>(
+                () => taskService.Archive(1),
+                "Esperasse que a tarefa não exista."
+            );
+
+            TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
+
+            CreateDiaryTaskDTO createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+
+            diaryTaskService.Create(createDiaryTaskTestDTO);
+
+            TaskEntity createdTask = TaskUtils.GetFirstEntity(serviceProvider);
+
+            ArchiveTaskResponse archiveTaskResponse = taskService.Archive(createdTask.Id);
+
+            Assert.IsTrue(
+                archiveTaskResponse.Message == TaskConstants.ArchiveTaskSuccessMessage,
+                "Esperasse que a tarefa tenha sido arquivada com sucesso."
+            );
+
+            archiveTaskResponse = taskService.Archive(createdTask.Id);
+
+            Assert.IsTrue(
+                archiveTaskResponse.Message == TaskConstants.TaskAllreadyArchivedMessage,
+                "Esperasse que a tarefa já esteja arquivada."
+            );
+        }
+        finally
+        {
+            TaskTypeUtils.ClearTaskTypesTable(serviceProvider);
+            TaskUtils.ClearTaskTable(serviceProvider);
+        }
+    }
+
+    [TestMethod]
+    public void UnarchiveTaskTest()
+    {
+        try
+        {
+            Assert.ThrowsException<NotFoundHttpException>(
+                () => taskService.Unarchive(1),
+                "Esperasse que a tarefa não exista."
+            );
+
+            TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
+
+            CreateDiaryTaskDTO createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+
+            diaryTaskService.Create(createDiaryTaskTestDTO);
+
+            TaskEntity createdTask = TaskUtils.GetFirstEntity(serviceProvider);
+
+            UnarchiveTaskResponse unarchiveTaskResponse = taskService.Unarchive(createdTask.Id);
+
+            Assert.IsTrue(
+                unarchiveTaskResponse.Message == TaskConstants.TaskAllreadyUnarchivedMessage,
+                "Esperasse que a tarefa já esteja desarquivada."
+            );
+
+            taskService.Archive(createdTask.Id);
+
+            unarchiveTaskResponse = taskService.Unarchive(createdTask.Id);
+
+            Assert.IsTrue(
+                unarchiveTaskResponse.Message == TaskConstants.UnarchiveTaskSuccessMessage,
+                "Esperasse que a tarefa já desarquivada com sucesso."
+            );
+        }
+        finally
+        {
+            TaskTypeUtils.ClearTaskTypesTable(serviceProvider);
+            TaskUtils.ClearTaskTable(serviceProvider);
+        }
+    }
+
+    [TestMethod]
+    public void DeleteTaskTest()
+    {
+        try
+        {
+            Assert.ThrowsException<NotFoundHttpException>(
+                () => taskService.Delete(1),
+                "Esperasse que a tarefa não exista."
+            );
+
+            TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
+
+            CreateDiaryTaskDTO createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+
+            diaryTaskService.Create(createDiaryTaskTestDTO);
+
+            TaskEntity createdTask = TaskUtils.GetFirstEntity(serviceProvider);
+
+            DeleteTaskResponse deleteTaskResponse = taskService.Delete(createdTask.Id);
+
+            Assert.IsTrue(
+                deleteTaskResponse.Message == TaskConstants.DeleteTaskSucessMessage,
+                "Esperasse que a tarefa seja deletada com sucesso."
+            );
+        }
+        finally
+        {
+            TaskTypeUtils.ClearTaskTypesTable(serviceProvider);
+            TaskUtils.ClearTaskTable(serviceProvider);
+        }
+    }
 }
