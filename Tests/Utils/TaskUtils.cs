@@ -27,6 +27,17 @@ public class TaskUtils : BaseUtils
         return moveTaskToTestDTO;
     }
 
+    public static UpdateTaskDTO CreateUpdateTaskTestDTO(string? name, string? description)
+    {
+        UpdateTaskDTO updateTaskTestDTO = new UpdateTaskDTO()
+        {
+            Name = name ?? DiaryTaskUtils.GetDiaryTaskTestName(),
+            Description = description
+        };
+
+        return updateTaskTestDTO;
+    }
+
     public static TaskEntity GetFirstEntity(ServiceProvider serviceProvider)
     {
         TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);

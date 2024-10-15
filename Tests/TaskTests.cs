@@ -247,4 +247,49 @@ public class TaskTests : BaseTests
             TaskUtils.ClearTaskTable(serviceProvider);
         }
     }
+
+    [TestMethod]
+    public void UpdateTaskTest()
+    {
+        try
+        {
+            string taskDescription = DiaryTaskUtils.GetDiaryTaskDescription();
+
+            UpdateTaskDTO updateTaskDTO = TaskUtils.CreateUpdateTaskTestDTO(null, taskDescription);
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () => taskService.Update(1, updateTaskDTO),
+                "Esperasse que a tarefa não exista."
+            );
+
+            TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
+
+            CreateDiaryTaskDTO createDiaryTaskDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+
+            diaryTaskService.Create(createDiaryTaskDTO);
+
+            TaskEntity createdTask = TaskUtils.GetFirstEntity(serviceProvider);
+
+            UpdateTaskResponse updateTaskResponse = taskService.Update(createdTask.Id, updateTaskDTO);
+
+            Assert.IsTrue(
+                updateTaskResponse.Message == TaskConstants.TaskDidNotChangeMessage,
+                "Esperasse que a tarefa não tenha sido atualizada pois nada mudou."
+            );
+
+            updateTaskDTO = TaskUtils.CreateUpdateTaskTestDTO("New task name", null);
+
+            updateTaskResponse = taskService.Update(createdTask.Id, updateTaskDTO);
+
+            Assert.IsTrue(
+                updateTaskResponse.Message == TaskConstants.TaskUpdateSuccessMessage,
+                "Esperasse que a tarefa tenha sido atualizada com sucesso."
+            );
+        }
+        finally
+        {
+            TaskTypeUtils.ClearTaskTypesTable(serviceProvider);
+            TaskUtils.ClearTaskTable(serviceProvider);
+        }
+    }
 }

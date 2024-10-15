@@ -49,7 +49,6 @@ C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\System
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\System.Runtime.Caching.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\System.Security.Permissions.dll
-C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\System.Text.Json.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\System.Windows.Extensions.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\cs\Microsoft.CodeAnalysis.resources.dll
 C:\Users\Jhosef Matheus\desktop\projetos\TodoManager\Api\bin\Debug\net8.0\de\Microsoft.CodeAnalysis.resources.dll
