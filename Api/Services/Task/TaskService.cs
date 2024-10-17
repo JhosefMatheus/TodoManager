@@ -6,16 +6,42 @@ using Api.Models.Exceptions.HttpExceptions;
 using Api.Models.Responses.Task;
 using Api.Models.Shared;
 using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json.Linq;
 
 namespace Api.Services.Task;
 
 public class TaskService : BaseService
 {
     private readonly TodoManagerContext todoManagerContext;
+    private readonly DiaryTaskService diaryTaskService;
 
-    public TaskService(TodoManagerContext todoManagerContext)
+    public TaskService(TodoManagerContext todoManagerContext, DiaryTaskService diaryTaskService)
     {
         this.todoManagerContext = todoManagerContext;
+        this.diaryTaskService = diaryTaskService;
+    }
+
+    public CreateTaskResponse Create(JObject createTaskDTO)
+    {
+
+        BaseCreateTaskDTO baseCreateTaskDTO = createTaskDTO.ToObject<BaseCreateTaskDTO>()
+            ?? throw new InternalServerErrorHttpException(TaskConstants.CreateBaseTaskDTOParseErrorMessage, AlertVariant.Error);
+
+        TaskTypeEntity taskTypeEntity = FindById<TaskTypeEntity>(todoManagerContext.TaskTypes, baseCreateTaskDTO.TaskTypeId)
+            ?? throw new NotFoundHttpException(TaskTypeConstants.TaskTypeNotFoundMessage, AlertVariant.Warning);
+
+        CreateTaskResponse createTaskResponse;
+
+        switch (taskTypeEntity.Name)
+        {
+            case "Diária":
+                createTaskResponse = diaryTaskService.Create(createTaskDTO);
+
+                return createTaskResponse;
+
+            default:
+                throw new NotFoundHttpException(TaskTypeConstants.TaskTypeNotFoundMessage, AlertVariant.Warning);
+        }
     }
 
     public MoveTaskToResponse MoveTo(int id, MoveTaskToDTO moveTaskToDTO)

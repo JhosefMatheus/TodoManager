@@ -6,6 +6,7 @@ using Api.Models.Responses.Task;
 using Api.Services;
 using Api.Services.Task;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 using Tests.Utils;
 
 namespace Tests;
@@ -34,6 +35,81 @@ public class TaskTests : BaseTests
     }
 
     [TestMethod]
+    public void CreateTaskTest()
+    {
+        try
+        {
+            JObject createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(1, null, null);
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () => taskService.Create(createDiaryTaskTestDTO),
+                "Esperasse que o tipo de tarefa diária não exista."
+            );
+
+            TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
+
+            TaskTypeEntity diaryTaskType = TaskTypeUtils.GetDiaryTaskTypeEntity(serviceProvider);
+
+            CreateTaskResponse createTaskResponse = taskService.Create(createDiaryTaskTestDTO);
+
+            createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, null, null);
+
+            Assert.IsTrue(
+                createTaskResponse.Message == DiaryTaskConstants.CreateDiaryTaskSuccessMessage,
+                "Esperasse que a tarefa diária tenha sido criada com sucesso."
+            );
+
+            ProjectSectionUtils.CreateProjectSection(projectService, serviceProvider, projectSectionService);
+
+            ProjectEntity createdProject = ProjectUtils.GetFirstProject(serviceProvider);
+
+            ProjectSectionEntity createdProjectSection = ProjectSectionUtils.GetFirstProjectSection(serviceProvider);
+
+            createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, 1, null);
+
+            Assert.ThrowsException<NotFoundHttpException>(
+                () => taskService.Create(createDiaryTaskTestDTO),
+                "Esperasse que o projeto não exista."
+            );
+
+            createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, createdProject.Id, null);
+
+            createTaskResponse = taskService.Create(createDiaryTaskTestDTO);
+
+            Assert.IsTrue(
+                createTaskResponse.Message == DiaryTaskConstants.CreateDiaryTaskSuccessMessage,
+                "Esperasse que a tarefa diária tenha sido criada com sucesso."
+            );
+
+            createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, null, createdProjectSection.Id);
+
+            createTaskResponse = taskService.Create(createDiaryTaskTestDTO);
+
+            Assert.IsTrue(
+                createTaskResponse.Message == DiaryTaskConstants.CreateDiaryTaskSuccessMessage,
+                "Esperasse que a tarefa diária tenha sido criada com sucesso."
+            );
+
+            createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, createdProject.Id, createdProjectSection.Id);
+
+            createTaskResponse = taskService.Create(createDiaryTaskTestDTO);
+
+            Assert.IsTrue(
+                createTaskResponse.Message == DiaryTaskConstants.CreateDiaryTaskSuccessMessage,
+                "Esperasse que a tarefa diária tenha sido criada com sucesso."
+            );
+        }
+        finally
+        {
+            ProjectSectionUtils.ClearProjectSectionsTable(serviceProvider);
+            ProjectUtils.ClearProjectsTable(serviceProvider);
+            TaskTypeUtils.ClearTaskTypesTable(serviceProvider);
+            DiaryTaskUtils.ClearTaskDayTable(serviceProvider);
+            TaskUtils.ClearTaskTable(serviceProvider);
+        }
+    }
+
+    [TestMethod]
     public void MoveTaskToTest()
     {
         try
@@ -45,9 +121,11 @@ public class TaskTests : BaseTests
                 "Esperasse que a tarefa não exista."
             );
 
-            CreateDiaryTaskDTO createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
-
             TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
+
+            TaskTypeEntity diaryTaskType = TaskTypeUtils.GetDiaryTaskTypeEntity(serviceProvider);
+
+            JObject createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, null, null);
 
             diaryTaskService.Create(createDiaryTaskTestDTO);
 
@@ -148,7 +226,9 @@ public class TaskTests : BaseTests
 
             TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
 
-            CreateDiaryTaskDTO createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+            TaskTypeEntity diaryTaskType = TaskTypeUtils.GetDiaryTaskTypeEntity(serviceProvider);
+
+            JObject createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, null, null);
 
             diaryTaskService.Create(createDiaryTaskTestDTO);
 
@@ -187,7 +267,9 @@ public class TaskTests : BaseTests
 
             TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
 
-            CreateDiaryTaskDTO createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+            TaskTypeEntity diaryTaskType = TaskTypeUtils.GetDiaryTaskTypeEntity(serviceProvider);
+
+            JObject createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, null, null);
 
             diaryTaskService.Create(createDiaryTaskTestDTO);
 
@@ -228,7 +310,9 @@ public class TaskTests : BaseTests
 
             TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
 
-            CreateDiaryTaskDTO createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+            TaskTypeEntity diaryTaskType = TaskTypeUtils.GetDiaryTaskTypeEntity(serviceProvider);
+
+            JObject createDiaryTaskTestDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, null, null);
 
             diaryTaskService.Create(createDiaryTaskTestDTO);
 
@@ -264,7 +348,9 @@ public class TaskTests : BaseTests
 
             TaskTypeUtils.PopulateTaskTypesTable(serviceProvider);
 
-            CreateDiaryTaskDTO createDiaryTaskDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(null, null);
+            TaskTypeEntity diaryTaskType = TaskTypeUtils.GetDiaryTaskTypeEntity(serviceProvider);
+
+            JObject createDiaryTaskDTO = DiaryTaskUtils.CreateDiaryTaskTestDTO(diaryTaskType.Id, null, null);
 
             diaryTaskService.Create(createDiaryTaskDTO);
 

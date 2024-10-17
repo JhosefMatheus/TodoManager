@@ -17,4 +17,5 @@ public class TaskConstants
     public const string TaskDidNotChangeMessage = "A tarefa não foi atualizada.";
     public const string TaskUpdateInternalServerErrorMessage = "Erro inesperado no servidor ao atualizar a tarefa.";
     public const string TaskUpdateSuccessMessage = "A tarefa foi atualizada com sucesso.";
+    public const string CreateBaseTaskDTOParseErrorMessage = "Erro inesperado no servidor ao passar dados de criação de tarefa para modelo desejado.";
 }

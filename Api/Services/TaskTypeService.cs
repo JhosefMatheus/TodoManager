@@ -32,7 +32,7 @@ public class TaskTypeService : BaseService
 
         return new GetAllTaskTypesResponse()
         {
-            Message = TaksTypeConstants.GetAllTaskTypesSuccessMessage,
+            Message = TaskTypeConstants.GetAllTaskTypesSuccessMessage,
             Variant = AlertVariant.Success,
             TaskTypes = taskTypes,
         };

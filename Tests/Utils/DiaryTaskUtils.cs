@@ -1,23 +1,27 @@
 using Api.Database;
 using Api.Models.DTO.Task;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Linq;
 
 namespace Tests.Utils;
 
 public class DiaryTaskUtils : BaseUtils
 {
-    public static CreateDiaryTaskDTO CreateDiaryTaskTestDTO(int? projectId, int? projectSectionId)
+    public static JObject CreateDiaryTaskTestDTO(int taskTypeId, int? projectId, int? projectSectionId)
     {
         CreateDiaryTaskDTO createDiaryTaskTestDTO = new CreateDiaryTaskDTO()
         {
             ProjectId = projectId,
             ProjectSectionId = projectSectionId,
+            TaskTypeId = taskTypeId,
             Name = GetDiaryTaskTestName(),
             Description = GetDiaryTaskDescription(),
             Days = new List<int>() { 1, 2, 3, 4, 5, 6, 7 },
         };
 
-        return createDiaryTaskTestDTO;
+        JObject createDiaryTaskJObject = JObject.FromObject(createDiaryTaskTestDTO);
+
+        return createDiaryTaskJObject;
     }
 
     public static string GetDiaryTaskTestName()

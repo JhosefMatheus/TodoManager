@@ -6,6 +6,7 @@ using Api.Models.Responses.Task;
 using Api.Models.Shared;
 using Api.Constants;
 using Microsoft.EntityFrameworkCore.Storage;
+using Newtonsoft.Json.Linq;
 
 namespace Api.Services.Task;
 
@@ -18,8 +19,11 @@ public class DiaryTaskService : BaseService
         this.todoManagerContext = todoManagerContext;
     }
 
-    public CreateTaskResponse Create(CreateDiaryTaskDTO createDiaryTaskDTO)
+    public CreateTaskResponse Create(JObject createDiaryTaskBaseDTO)
     {
+        CreateDiaryTaskDTO createDiaryTaskDTO = createDiaryTaskBaseDTO.ToObject<CreateDiaryTaskDTO>()
+            ?? throw new InternalServerErrorHttpException(DiaryTaskConstants.InvalidCreateDiaryTaskBaseDTOMessage, AlertVariant.Error);
+
         bool hasProjectId = createDiaryTaskDTO.ProjectId != null;
 
         ProjectEntity? projectEntity = null;
@@ -43,13 +47,6 @@ public class DiaryTaskService : BaseService
                 ?? throw new NotFoundHttpException(ProjectSectionConstants.ProjectSectionNotFoundMessage, AlertVariant.Error);
         }
 
-        TaskTypeEntity taskType = FindByColumn<TaskTypeEntity, string>(
-                todoManagerContext.TaskTypes,
-                (TaskTypeEntity taskType) => taskType.Name,
-                "Diária"
-            )
-            ?? throw new NotFoundHttpException(TaksTypeConstants.TaskTypeNotFoundMessage, AlertVariant.Error);
-
         if (createDiaryTaskDTO.Days.Count == 0)
         {
             throw new BadHttpException(DiaryTaskConstants.NoDaysProvidedMessage, AlertVariant.Warning);
@@ -70,7 +67,7 @@ public class DiaryTaskService : BaseService
         {
             TaskEntity diaryTask = new TaskEntity()
             {
-                TaskTypeId = taskType.Id,
+                TaskTypeId = createDiaryTaskDTO.TaskTypeId,
                 Name = createDiaryTaskDTO.Name,
                 Description = createDiaryTaskDTO.Description,
             };

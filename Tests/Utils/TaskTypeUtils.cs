@@ -28,4 +28,22 @@ public class TaskTypeUtils : BaseUtils
 
         todoManagerContext.SaveChanges();
     }
+
+    public static TaskTypeEntity GetDiaryTaskTypeEntity(ServiceProvider serviceProvider)
+    {
+        TodoManagerContext todoManagerContext = GetTodoManagerContext(serviceProvider);
+
+        TaskTypeEntity taskTypeEntity = todoManagerContext
+            .TaskTypes
+            .AsEnumerable<TaskTypeEntity>()
+            .Where<TaskTypeEntity>((TaskTypeEntity taskTypeEntity) =>
+            {
+                bool validName = taskTypeEntity.Name == "Diária";
+
+                return validName;
+            })
+            .First<TaskTypeEntity>();
+
+        return taskTypeEntity;
+    }
 }
